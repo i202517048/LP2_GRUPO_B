@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Hotel Morfeo - Edición Registro</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+</head>
+
+<body>
+	<div class="container mt-5">
+		<div class="card shadow-lg">
+			<div class="card-body">
+				<h1 class="card-title text-center">Reserva Edición</h1>
+				<div class="row d-flex justify-content-center">
+					<div class="col-md-6">
+						<form th:action="@{/reserva/grabar}" class="row g-2" method="post" novalidate
+							th:object="${reserva}">
+							
+							<input type="hidden" th:field="*{idReserva}"/>
+							<input type="hidden" th:field="*{estado}">
+
+							<!-- Nombre Huésped -->
+							<div class="col-md-6 position-relative">
+								<label for="huespedes" class="form-label">Nombre</label>
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-user"></i>
+									</span>
+									<select class="form-select" th:field="*{huespedes.idHuesped}">
+										<option value="" selected hidden="hidden">
+											--Seleccione--
+										</option>
+										
+										<option
+											th:each="item: ${lstHuespedes}"
+											th:text="${item.fullName}"
+											th:value="${item.idHuesped}">
+											
+										</option>
+										
+									</select>
+								</div>
+							</div>
+							
+							<!-- Nro. Habitacion -->
+							<div class="col-md-6 position-relative">
+								<label for="habitaciones" class="form-label">Nro. Habitación</label>
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-user"></i>
+									</span>
+									<select class="form-select" th:field="*{habitaciones.idHabitacion}">
+										<option value="" selected hidden="hidden">
+											--Seleccione--
+										</option>
+										
+										<option
+											th:each="item: ${lstHabitaciones}"
+											th:text="${item.numero}"
+											th:value="${item.idHabitacion}">
+											
+										</option>
+										
+									</select>
+								</div>
+							</div>
+
+							<!-- Fecha Check In -->
+							<div class="col-md-6 position-relative">
+								<label for="fechaCheckin" class="form-label">
+									Fecha Check In
+								</label>
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-calendar-days"></i>
+									</span>
+									<input type="text" class="form-control" 
+										th:field="*{fechaCheckin}"
+										>
+								</div>
+							</div>
+
+							<!-- Fecha Check Out Prevista -->
+							<div class="col-md-6 position-relative">
+								<label for="fechaCheckoutPrevista" class="form-label">
+									Fecha Check Out Prevista
+								</label>
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-calendar-check"></i>
+									</span>
+									<input type="text" class="form-control" 
+										th:field="*{fechaCheckoutPrevista}"
+										>
+								</div>
+							</div>
+
+							<div class="col-md-12 d-flex justify-content-between">
+								<!-- Botón Regresar -->
+								<a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
+									<i class="fa-solid fa-reply"></i> Regresar
+								</a>
+								<!-- Botón Registrar -->
+								<button type="submit" class="btn btn-primary">
+									<i class="fa-solid fa-floppy-disk"></i> Grabar
+								</button>
+								<!-- Botón Limpiar -->
+								<button type="reset" class="btn btn-secondary">
+									<i class="fa-solid fa-broom"></i> Limpiar
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document)
+			.ready(
+				function () {
+					$("")
+						.validate(
+							{
+								rules: {
+
+								},
+								messages: {
+
+								},
+								errorElement: 'div',
+								errorClass: 'invalid-tooltip',
+								highlight: function (element) {
+									$(element).addClass(
+										'is-invalid')
+										.removeClass(
+											'is-valid');
+								},
+								unhighlight: function (element) {
+									$(element).removeClass(
+										'is-invalid')
+										.addClass(
+											'is-valid');
+								}
+							});
+				});
+	</script>
+</body>

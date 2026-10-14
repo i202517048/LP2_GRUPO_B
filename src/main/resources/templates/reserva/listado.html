@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Hotel Morfeo</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+	<div class="container mt-5">
+		<div class="card shadow-lg">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-10">
+						<h1 class="card-title">Listado de Reservas</h1>
+					</div>
+					<div class="col-md-2">
+						<a th:href="@{/reserva/nuevo}" class="btn btn-success w-100"> <i class="fa-solid fa-plus"></i>
+							Nuevo
+						</a>
+					</div>
+				</div>
+				<div class="table-responsive overflow-auto" style="max-height: 70vh;">
+					<table class="table table-hover">
+						<thead class="table-dark text-center">
+							<tr class="position-sticky top-0">
+								<th>Id</th>
+								<th>Huésped</th>
+								<th>Habitación</th>
+								<th>Check In</th>
+								<th>Check Out Previsto</th>
+								<th>Check Out Real</th>
+								<th>Estado</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody class="table-secondary">
+							<tr th:each="item: ${lstReservas}">
+								<td th:text="${item.idReserva}" class="text-center" /td>
+								<td th:text="${item.huespedes.fullName}"></td>
+								<td th:text="${item.habitaciones.numero}"></td>
+								<td th:text="${item.fechaCheckin}"></td>
+								<td th:text="${item.fechaCheckoutPrevista}"></td>
+								<td th:text="${item.fechaCheckoutReal}"></td>
+								<td th:text="${item.estado}"></td>
+								<td class="d-flex justify-content-evenly align-items-center text-center">
+									<a th:href="@{/reserva/edicion/{id}(id=${item.idReserva})}" class="btn btn-outline-primary" title="Editar" aria-label="Editar"
+										role="button">
+										<i class="fa-regular fa-pen-to-square"></i>
+									</a>
+									<form method="post" action="#">
+										<div class="form-switch">
+											<input class="form-check-input" type="checkbox">
+										</div>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:utext="${alert}"></th:block>
+</body>
+
+</html>
