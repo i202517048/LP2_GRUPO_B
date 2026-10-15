@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Hotel Morfeo - Servicios adicionales</title>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
+
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+	<div class="container mt-5">
+		<div class="card shadow-lg">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-md-10">
+						<h1 class="card-title">Listado de Servicios Adicionales</h1>
+					</div>
+
+					<div class="col-md-2">
+						<a th:href="@{/servicios/nuevo}" class="btn btn-success w-100">
+							<i class="fa-solid fa-plus"></i>
+							Nuevo
+						</a>
+					</div>
+				</div>
+
+				<div class="table-responsive overflow-auto" style="max-height: 70vh;">
+					<table class="table table-hover">
+						<thead class="table-dark text-center">
+							<tr class="position-sticky top-0">
+								<th>Id</th>
+								<th>Nombre</th>
+								<th>Precio (S/)</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+
+						<tbody class="table-secondary">
+							<tr th:each="item : ${lstServicios}">
+								<td th:text="${item.idServicio}" class="text-center"></td>
+
+								<td th:text="${item.nombre}"></td>
+
+								<td th:text="${#numbers.formatDecimal(item.precio, 1, 2)}" class="text-end"></td>
+
+								<td th:text="${item.activoServicios == null
+                                    ? 'Sin definir'
+                                    : (item.activoServicios == 1 ? 'Activo' : 'Inactivo')}" class="text-center"></td>
+							</tr>
+
+							<tr th:if="${#lists.isEmpty(lstServicios)}">
+								<td colspan="4" class="text-center">
+									No hay servicios registrados.
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
+					Regresar a reservas
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<th:block th:utext="${alert}"></th:block>
+</body>
+
+</html>
