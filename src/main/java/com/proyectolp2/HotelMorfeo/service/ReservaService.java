@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.proyectolp2.HotelMorfeo.dto.ResultadoResponse;
-import com.proyectolp2.HotelMorfeo.model.Reservas;
+import com.proyectolp2.HotelMorfeo.model.Reserva;
+
 import com.proyectolp2.HotelMorfeo.repository.ReservaRepository;
 
 import jakarta.transaction.Transactional;
@@ -18,14 +19,14 @@ public class ReservaService {
 	private final ReservaRepository reservaRepository;
 		
 	@GetMapping("listado")
-	public List<Reservas> getAll() {
+	public List<Reserva> getAll() {
 		return reservaRepository.findAll();
 		
 	}
 		
 	// Método Crear
 	@Transactional
-	public ResultadoResponse create(Reservas reservas) {
+	public ResultadoResponse create(Reserva reservas) {
 		try {
 			var registrado = reservaRepository.save(reservas);
 			var mensaje = String.format("Reserva con Id %s registrado.", registrado.getIdReserva());
@@ -38,7 +39,7 @@ public class ReservaService {
 	}
 	
 	// Método obtener
-	public Reservas getOne(Integer id) {
+	public Reserva getOne(Integer id) {
 		
 		return reservaRepository.findById(id).orElse(null);
 	}
@@ -46,7 +47,7 @@ public class ReservaService {
 	
 	// Método actualizar
 		@Transactional
-		public ResultadoResponse update(Reservas reservas) {
+		public ResultadoResponse update(Reserva reservas) {
 			try {
 				var registrado = reservaRepository.save(reservas);
 

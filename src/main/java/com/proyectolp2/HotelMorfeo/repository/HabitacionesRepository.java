@@ -2,9 +2,10 @@ package com.proyectolp2.HotelMorfeo.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.proyectolp2.HotelMorfeo.model.Habitaciones;
+import com.proyectolp2.HotelMorfeo.model.Habitacion;
 
 
-public interface HabitacionesRepository extends JpaRepository<Habitaciones, Integer> {
+
+public interface HabitacionesRepository extends JpaRepository<Habitacion, Integer> {
 	
 }

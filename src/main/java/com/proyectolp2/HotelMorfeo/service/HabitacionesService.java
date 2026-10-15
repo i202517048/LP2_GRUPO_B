@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.proyectolp2.HotelMorfeo.model.Habitaciones;
+import com.proyectolp2.HotelMorfeo.model.Habitacion;
 import com.proyectolp2.HotelMorfeo.repository.HabitacionesRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class HabitacionesService {
 	private final HabitacionesRepository habitacionesRepository;
 	
 	@GetMapping("nuevo")
-	public List<Habitaciones> getAll() {
+	public List<Habitacion> getAll() {
 		return habitacionesRepository.findAll();
 	}
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.proyectolp2.HotelMorfeo.model.Reservas;
+import com.proyectolp2.HotelMorfeo.model.Reserva;
 import com.proyectolp2.HotelMorfeo.service.HabitacionesService;
 import com.proyectolp2.HotelMorfeo.service.HuespedesService;
 import com.proyectolp2.HotelMorfeo.service.ReservaService;
@@ -36,13 +36,13 @@ public class ReservaController {
 	public String nuevo(Model model) {
 		model.addAttribute("lstHuespedes", huespedesService.getAll());
 		model.addAttribute("lstHabitaciones", habitacionesService.getAll());
-		model.addAttribute("reservas", new Reservas());
+		model.addAttribute("reservas", new Reserva());
 		
 		return "reserva/nuevo";
 	}
 	
 	@PostMapping("registrar")
-	public String registrar(@ModelAttribute Reservas reservas, RedirectAttributes flash) {
+	public String registrar(@ModelAttribute Reserva reservas, RedirectAttributes flash) {
 		var response = reservaService.create(reservas); 
 		
 		var alert = Alert.sweetToast(response.mensaje(), "success", 5000);
@@ -58,7 +58,7 @@ public class ReservaController {
 				
 		model.addAttribute("reserva", reservaService.getOne(id));
 		
-		Reservas reserva = reservaService.getOne(id);
+		Reserva reserva = reservaService.getOne(id);
 		
 		System.out.println(reserva.getFechaCheckin());
 	    System.out.println(reserva.getFechaCheckoutPrevista());
@@ -69,7 +69,7 @@ public class ReservaController {
 	
 	// Controller que consume el service update
 		@PostMapping("grabar")
-		public String grabar(@ModelAttribute Reservas reservas, RedirectAttributes flash) {
+		public String grabar(@ModelAttribute Reserva reservas, RedirectAttributes flash) {
 			var response = reservaService.update(reservas);
 
 			var alert = Alert.sweetToast(response.mensaje(), "success", 5000);

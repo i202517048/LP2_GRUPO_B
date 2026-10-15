@@ -40,8 +40,8 @@
 						<tbody class="table-secondary">
 							<tr th:each="item: ${lstReservas}">
 								<td th:text="${item.idReserva}" class="text-center" /td>
-								<td th:text="${item.huespedes.fullName}"></td>
-								<td th:text="${item.habitaciones.numero}"></td>
+								<td th:text="${item.huesped.fullName}"></td>
+								<td th:text="${item.habitacion.numero}"></td>
 								<td th:text="${item.fechaCheckin}"></td>
 								<td th:text="${item.fechaCheckoutPrevista}"></td>
 								<td th:text="${item.fechaCheckoutReal}"></td>
