@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Hotel Morfeo - Edición Servicio</title>
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+</head>
+
+<body>
+	<div class="container mt-5">
+		<div class="card shadow-lg">
+			<div class="card-body">
+				<h1 class="card-title text-center">
+					Edición de Servicio Adicional
+				</h1>
+
+				<div class="row d-flex justify-content-center">
+					<div class="col-md-6">
+
+						<div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert">
+						</div>
+
+						<form id="frm-servicio" th:action="@{/servicios/grabar}" th:object="${servicio}" class="row g-2"
+							method="post" novalidate>
+
+							<input type="hidden" th:field="*{idServicio}">
+
+							<div class="col-md-12">
+								<label for="nombre" class="form-label">
+									Nombre del servicio
+								</label>
+
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-bell-concierge"></i>
+									</span>
+
+									<input type="text" th:field="*{nombre}" class="form-control" maxlength="100">
+								</div>
+							</div>
+
+							<div class="col-md-12">
+								<label for="precio" class="form-label">
+									Precio (S/)
+								</label>
+
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-coins"></i>
+									</span>
+
+									<input type="number" th:field="*{precio}" class="form-control" min="0.01"
+										max="99999999.99" step="0.01">
+								</div>
+							</div>
+
+							<div class="col-md-12 d-flex justify-content-between mt-3">
+								<a th:href="@{/servicios/listado}" class="btn btn-outline-dark">
+									<i class="fa-solid fa-reply"></i>
+									Regresar
+								</a>
+
+								<button type="submit" class="btn btn-primary">
+									<i class="fa-solid fa-floppy-disk"></i>
+									Grabar
+								</button>
+
+								<button type="reset" class="btn btn-secondary">
+									<i class="fa-solid fa-rotate-left"></i>
+									Restablecer
+								</button>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function () {
+			$("#frm-servicio").validate({
+				rules: {
+					nombre: {
+						required: true,
+						normalizer: function (value) {
+							return $.trim(value);
+						},
+						maxlength: 100
+					},
+					precio: {
+						required: true,
+						number: true,
+						min: 0.01,
+						max: 99999999.99,
+						step: 0.01
+					}
+				},
+				messages: {
+					nombre: {
+						required: "Ingrese el nombre del servicio.",
+						maxlength: "Ingrese como máximo 100 caracteres."
+					},
+					precio: {
+						required: "Ingrese el precio.",
+						number: "Ingrese un precio válido.",
+						min: "El precio debe ser mayor a cero.",
+						max: "El precio supera el máximo permitido.",
+						step: "Ingrese como máximo dos decimales."
+					}
+				},
+				errorElement: "div",
+				errorClass: "invalid-feedback",
+				errorPlacement: function (error, element) {
+					error.insertAfter(element.closest(".input-group"));
+				},
+				highlight: function (element) {
+					$(element).addClass("is-invalid").removeClass("is-valid");
+				},
+				unhighlight: function (element) {
+					$(element).removeClass("is-invalid").addClass("is-valid");
+				}
+			});
+		});
+	</script>
+</body>
+
+</html>
