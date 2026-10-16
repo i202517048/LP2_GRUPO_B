@@ -8,4 +8,10 @@ import com.proyectolp2.HotelMorfeo.model.Habitacion;
 
 public interface HabitacionesRepository extends JpaRepository<Habitacion, Integer> {
 	
+	boolean existsByNumeroIgnoreCase(String numero);
+	
+	boolean existsByNumeroIgnoreCaseAndIdHabitacionNot(
+	        String numero, Integer idHabitacion
+	    );
+	
 }
