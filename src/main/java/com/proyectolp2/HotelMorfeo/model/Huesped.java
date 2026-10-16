@@ -35,6 +35,6 @@ public class Huesped {
     private Integer activoHuespedes = 1;
     
     public String getFullName (){
-    	return nombres + apellidos + "";
+    	return nombres +" " + apellidos + "";
     }
 }

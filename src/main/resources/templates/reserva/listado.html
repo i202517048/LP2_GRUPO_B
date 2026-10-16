@@ -23,6 +23,51 @@
 						</a>
 					</div>
 				</div>
+				<div class="mb-3">
+					<fieldset class="border border-2 border-dark px-2 pb-2">
+						<legend class="float-none w-auto px-2">Filtros</legend>
+						<form th:action="@{/reserva/listado}" method="get" th:object="${filter}">
+							<div class="row align-items-end">
+								<div class="col-md-3">
+									<label for="idCategoria" class="form-label">Nro. Habitación</label>
+									<div class="input-group">
+										<span class="input-group-text"><i
+												class="fa-solid fa-chalkboard-user"></i></span>
+										<select class="form-select"  th:field="*{numero}">
+											<option value="">--Todos--</option>
+											<option th:each="item: ${lstHabitaciones}" th:text="${item.numero}"
+												th:value="${item.numero}">
+
+											</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<label for="proveedor" class="form-label">Nomber Huesped</label>
+									<div class="input-group">
+										<span class="input-group-text" ><i class="fa-solid fa-truck-fast"></i></span>
+										<select class="form-select" th:field="*{nombres}">
+											<option value="">--Todos--
+											</option>
+											<option th:each="item: ${lstHuespedes}" th:text="${item.nombres}"
+												th:value="${item.nombres}">
+
+											</option>
+										</select>
+									</div>
+								</div>
+								<div class="col text-end">
+									<button type="submit" class="btn btn-outline-dark">
+										<i class="fa-solid fa-binoculars"></i> Buscar
+									</button>
+									<a th:href="@{/reserva/listado}" class="btn btn-outline-secondary">
+										<i class="fa-solid fa-broom"></i> Limpiar
+									</a>
+								</div>
+							</div>
+						</form>
+					</fieldset>
+				</div>
 				<div class="table-responsive overflow-auto" style="max-height: 70vh;">
 					<table class="table table-hover">
 						<thead class="table-dark text-center">

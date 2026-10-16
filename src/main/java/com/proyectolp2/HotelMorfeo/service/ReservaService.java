@@ -3,8 +3,8 @@ package com.proyectolp2.HotelMorfeo.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
+import com.proyectolp2.HotelMorfeo.dto.ReservaFilter;
 import com.proyectolp2.HotelMorfeo.dto.ResultadoResponse;
 import com.proyectolp2.HotelMorfeo.model.Reserva;
 
@@ -18,10 +18,15 @@ import lombok.RequiredArgsConstructor;
 public class ReservaService {
 	private final ReservaRepository reservaRepository;
 		
-	@GetMapping("listado")
+	
 	public List<Reserva> getAll() {
-		return reservaRepository.findAll();
+		return reservaRepository.findAllByOrderByIdReservaDesc();
 		
+	}
+	
+	public List<Reserva> search(ReservaFilter filter){
+		
+		return reservaRepository.findByFilters(filter.numero(), filter.nombres());
 	}
 		
 	// Método Crear

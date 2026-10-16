@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.proyectolp2.HotelMorfeo.dto.ReservaFilter;
 import com.proyectolp2.HotelMorfeo.model.Reserva;
 import com.proyectolp2.HotelMorfeo.service.HabitacionesService;
 import com.proyectolp2.HotelMorfeo.service.HuespedesService;
@@ -26,8 +27,11 @@ public class ReservaController {
 	private final HabitacionesService habitacionesService;
 	
 	@GetMapping("listado")
-	public String listado(Model model) {
-		model.addAttribute("lstReservas", reservaService.getAll());
+	public String listado(@ModelAttribute ReservaFilter filter,Model model) {
+		model.addAttribute("lstReservas", reservaService.search(filter));
+		model.addAttribute("filter",filter);
+		model.addAttribute("lstHuespedes", huespedesService.getAll());
+		model.addAttribute("lstHabitaciones", habitacionesService.getAll());
 		
 		return "reserva/listado";
 	}
