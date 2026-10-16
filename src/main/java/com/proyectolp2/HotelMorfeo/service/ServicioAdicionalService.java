@@ -18,43 +18,89 @@ public class ServicioAdicionalService {
 
 	private final ServicioAdicionalRepository servicioAdicionalRepository;
 
+	// Método listar
 	public List<ServicioAdicional> getAll() {
-		return servicioAdicionalRepository.findAllByOrderByIdServicioDesc();
+		return servicioAdicionalRepository.findAll();
 	}
 
+	// Método crear
 	@Transactional
 	public ResultadoResponse create(ServicioAdicional servicio) {
+		String error = validar(servicio);
 
-		if (servicio.getNombre() == null || servicio.getNombre().isBlank()) {
-			return new ResultadoResponse(false, "Ingrese el nombre del servicio.");
+		if (error != null) {
+			return new ResultadoResponse(false, error);
 		}
 
-		String nombre = servicio.getNombre().trim();
+		servicio.setIdServicio(null);
+		servicio.setNombre(servicio.getNombre().trim());
+		servicio.setActivoServicios(1);
 
-		if (nombre.length() > 100) {
-			return new ResultadoResponse(false, "El nombre debe tener como máximo 100 caracteres.");
+		var registrado = servicioAdicionalRepository.save(servicio);
+
+		var mensaje = String.format("Servicio con Id %s registrado.", registrado.getIdServicio());
+
+		return new ResultadoResponse(true, mensaje);
+	}
+
+	// Método obtener
+	public ServicioAdicional getOne(Integer id) {
+		return servicioAdicionalRepository.findById(id).orElse(null);
+	}
+
+	// Método actualizar
+	@Transactional
+	public ResultadoResponse update(ServicioAdicional servicio) {
+		if (servicio.getIdServicio() == null) {
+			return new ResultadoResponse(false, "Debe indicar el servicio.");
+		}
+
+		var existente = servicioAdicionalRepository.findById(servicio.getIdServicio()).orElse(null);
+
+		if (existente == null) {
+			return new ResultadoResponse(false, "El servicio no existe.");
+		}
+
+		String error = validar(servicio);
+
+		if (error != null) {
+			return new ResultadoResponse(false, error);
+		}
+
+		existente.setNombre(servicio.getNombre().trim());
+		existente.setPrecio(servicio.getPrecio());
+
+		var registrado = servicioAdicionalRepository.save(existente);
+
+		var mensaje = String.format("Servicio con Id %s actualizado.", registrado.getIdServicio());
+
+		return new ResultadoResponse(true, mensaje);
+	}
+
+	// Validaciones para crear y actualizar
+	private String validar(ServicioAdicional servicio) {
+		if (servicio.getNombre() == null || servicio.getNombre().isBlank()) {
+			return "Ingrese el nombre del servicio.";
+		}
+
+		if (servicio.getNombre().trim().length() > 100) {
+			return "El nombre debe tener como máximo 100 caracteres.";
 		}
 
 		BigDecimal precio = servicio.getPrecio();
 
 		if (precio == null || precio.compareTo(BigDecimal.ZERO) <= 0) {
-			return new ResultadoResponse(false, "El precio debe ser mayor a cero.");
+			return "El precio debe ser mayor a cero.";
 		}
 
 		if (precio.stripTrailingZeros().scale() > 2) {
-			return new ResultadoResponse(false, "El precio debe tener como máximo dos decimales.");
+			return "El precio debe tener como máximo dos decimales.";
 		}
 
 		if (precio.compareTo(new BigDecimal("99999999.99")) > 0) {
-			return new ResultadoResponse(false, "El precio supera el máximo permitido.");
+			return "El precio supera el máximo permitido.";
 		}
 
-		servicio.setIdServicio(null);
-		servicio.setNombre(nombre);
-		servicio.setActivoServicios(1);
-
-		servicioAdicionalRepository.save(servicio);
-
-		return new ResultadoResponse(true, "Servicio registrado correctamente.");
+		return null;
 	}
 }

@@ -3,9 +3,9 @@
 
 <head>
 	<meta charset="UTF-8" />
-	<title>Hotel Morfeo - Servicios adicionales</title>
+	<title>Hotel Morfeo - Servicios Adicionales</title>
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
 
@@ -18,7 +18,9 @@
 			<div class="card-body">
 				<div class="row">
 					<div class="col-md-10">
-						<h1 class="card-title">Listado de Servicios Adicionales</h1>
+						<h1 class="card-title">
+							Listado de Servicios Adicionales
+						</h1>
 					</div>
 
 					<div class="col-md-2">
@@ -37,6 +39,7 @@
 								<th>Nombre</th>
 								<th>Precio (S/)</th>
 								<th>Estado</th>
+								<th>Acciones</th>
 							</tr>
 						</thead>
 
@@ -51,10 +54,18 @@
 								<td th:text="${item.activoServicios == null
                                     ? 'Sin definir'
                                     : (item.activoServicios == 1 ? 'Activo' : 'Inactivo')}" class="text-center"></td>
+
+								<td class="text-center">
+									<a th:href="@{/servicios/edicion/{id}(id=${item.idServicio})}"
+										class="btn btn-outline-primary" title="Editar servicio"
+										aria-label="Editar servicio">
+										<i class="fa-regular fa-pen-to-square"></i>
+									</a>
+								</td>
 							</tr>
 
 							<tr th:if="${#lists.isEmpty(lstServicios)}">
-								<td colspan="4" class="text-center">
+								<td colspan="5" class="text-center">
 									No hay servicios registrados.
 								</td>
 							</tr>
@@ -63,6 +74,7 @@
 				</div>
 
 				<a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
+					<i class="fa-solid fa-reply"></i>
 					Regresar a reservas
 				</a>
 			</div>
