@@ -10,5 +10,11 @@ public class HomeController {
 	public String home() {
 			return "redirect:/login";
 	}
+	
+	// Pantalla de inicio
+	@GetMapping("/home/dashboard")
+	public String dashboard() {
+	    return "home/dashboard";
+	}
 
 }

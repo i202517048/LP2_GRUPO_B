@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layoutBase(contenido, titulo)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:replace="${titulo}">Hotel Morfeo</title>
+
+    <!-- Recursos comunes a las pantallas internas -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+</head>
+
+<body>
+    <!-- Menu lateral con checkbox -->
+    <input type="checkbox" id="btn-menu" class="menu-toggle"
+           aria-label="Abrir o cerrar el menú de navegación">
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="d-flex align-items-center gap-3">
+                <label for="btn-menu" class="btn-menu" title="Abrir menú">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                    <span class="visually-hidden">Abrir menú</span>
+                </label>
+                <a th:href="@{/home/dashboard}" class="brand">
+                    <i class="fa-solid fa-hotel" aria-hidden="true"></i>
+                    Hotel Morfeo
+                </a>
+            </div>
+
+            <div class="header-user" th:if="${session.usuarioSesion != null}">
+                <span class="user-name"
+                      th:text="|${session.usuarioSesion.nombres} ${session.usuarioSesion.apellidos}|">
+                </span>
+                <span class="user-role"
+                      th:text="${session.usuarioSesion.idRol == 3
+                          ? 'Administrador'
+                          : (session.usuarioSesion.idRol == 2 ? 'Recepcionista' : 'Personal')}">
+                </span>
+            </div>
+            <a th:if="${session.usuarioSesion == null}"
+               th:href="@{/login}" class="header-login">
+                Iniciar sesión
+            </a>
+        </div>
+    </header>
+
+    <div class="container-menu">
+        <label for="btn-menu" class="menu-overlay" aria-label="Cerrar menú"></label>
+        <aside class="cont-menu" aria-label="Menú principal">
+            <div class="menu-heading">
+                <span>Navegación</span>
+                <label for="btn-menu" class="menu-close" title="Cerrar menú">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    <span class="visually-hidden">Cerrar menú</span>
+                </label>
+            </div>
+
+            <nav>
+                <a th:href="@{/home/dashboard}" th:attr="data-base=@{/home/}">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i> Inicio
+                </a>
+                <a th:href="@{/reserva/listado}" th:attr="data-base=@{/reserva/}">
+                    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i> Reservas
+                </a>
+                <a th:href="@{/habitaciones/listado}" th:attr="data-base=@{/habitaciones/}">
+                    <i class="fa-solid fa-bed" aria-hidden="true"></i> Habitaciones
+                </a>
+                <a th:href="@{/servicios/listado}" th:attr="data-base=@{/servicios/}">
+                    <i class="fa-solid fa-bell-concierge" aria-hidden="true"></i> Servicios adicionales
+                </a>
+            </nav>
+
+            <div class="menu-footer">
+                <form id="frm-cerrar-sesion" th:action="@{/logout}" method="post"
+                      th:if="${session.usuarioSesion != null}">
+                    <button type="submit" class="logout-button">
+                        <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
+        </aside>
+    </div>
+
+    <main class="app-main">
+        <div class="app-content">
+            <!-- Contenido de cada pagina -->
+            <th:block th:replace="${contenido}"></th:block>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("btn-menu");
+
+            document.querySelectorAll(".cont-menu nav a[data-base]").forEach(function (link) {
+                if (window.location.pathname.startsWith(link.dataset.base)) {
+                    link.classList.add("active");
+                    link.setAttribute("aria-current", "page");
+                }
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    toggle.checked = false;
+                }
+            });
+
+            const logout = document.getElementById("frm-cerrar-sesion");
+            if (logout) {
+                logout.addEventListener("submit", function (event) {
+                    event.preventDefault();
+                    if (typeof Swal === "undefined") {
+                        if (window.confirm("¿Deseas cerrar sesión?")) {
+                            logout.submit();
+                        }
+                        return;
+                    }
+                    Swal.fire({
+                        title: "¿Deseas cerrar sesión?",
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "Sí, cerrar",
+                        cancelButtonText: "Volver",
+                        confirmButtonColor: "#234b68"
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            logout.submit();
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    <th:block th:utext="${alert}"></th:block>
+</body>
+</html>

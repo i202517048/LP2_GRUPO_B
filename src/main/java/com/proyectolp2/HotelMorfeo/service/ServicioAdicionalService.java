@@ -26,6 +26,7 @@ public class ServicioAdicionalService {
 	// Método crear
 	@Transactional
 	public ResultadoResponse create(ServicioAdicional servicio) {
+
 		String error = validar(servicio);
 
 		if (error != null) {
@@ -51,7 +52,9 @@ public class ServicioAdicionalService {
 	// Método actualizar
 	@Transactional
 	public ResultadoResponse update(ServicioAdicional servicio) {
-		if (servicio.getIdServicio() == null) {
+
+		// Comprobar objeto e identificador
+		if (servicio == null || servicio.getIdServicio() == null) {
 			return new ResultadoResponse(false, "Debe indicar el servicio.");
 		}
 
@@ -67,7 +70,22 @@ public class ServicioAdicionalService {
 			return new ResultadoResponse(false, error);
 		}
 
-		existente.setNombre(servicio.getNombre().trim());
+		// Proteger el nombre de consumos sin facturar
+		// ----------------
+		String nombre = servicio.getNombre().trim();
+
+		boolean cambiaNombre = !nombre.equals(existente.getNombre());
+
+		if (cambiaNombre
+				&& servicioAdicionalRepository.contarConsumosPendientesDeFacturacion(existente.getIdServicio()) > 0) {
+
+			return new ResultadoResponse(false,
+					"No se puede cambiar el nombre: el servicio tiene " + "consumos vigentes sin facturar.");
+		}
+
+		existente.setNombre(nombre);
+		// ----------------
+
 		existente.setPrecio(servicio.getPrecio());
 
 		var registrado = servicioAdicionalRepository.save(existente);
@@ -79,6 +97,13 @@ public class ServicioAdicionalService {
 
 	// Validaciones para crear y actualizar
 	private String validar(ServicioAdicional servicio) {
+
+		// INICIO ADAPTACION SAS03: evitar acceso a un objeto nulo
+		if (servicio == null) {
+			return "Debe indicar los datos del servicio.";
+		}
+		// FIN ADAPTACION SAS03
+
 		if (servicio.getNombre() == null || servicio.getNombre().isBlank()) {
 			return "Ingrese el nombre del servicio.";
 		}

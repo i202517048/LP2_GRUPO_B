@@ -1,116 +1,191 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
 <head>
-	<meta charset="UTF-8" />
-	<title>Hotel Morfeo</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Hotel Morfeo - Listado de Reservas</title>
 </head>
-
 <body>
-	<div class="container mt-5">
-		<div class="card shadow-lg">
-			<div class="card-body">
-				<div class="row">
-					<div class="col-md-10">
-						<h1 class="card-title">Listado de Reservas</h1>
-					</div>
-					<div class="col-md-2">
-						<a th:href="@{/reserva/nuevo}" class="btn btn-success w-100"> <i class="fa-solid fa-plus"></i>
-							Nuevo
-						</a>
-					</div>
-				</div>
-				<div class="mb-3">
-					<fieldset class="border border-2 border-dark px-2 pb-2">
-						<legend class="float-none w-auto px-2">Filtros</legend>
-						<form th:action="@{/reserva/listado}" method="get" th:object="${filter}">
-							<div class="row align-items-end">
-								<div class="col-md-3">
-									<label for="idCategoria" class="form-label">Nro. Habitación</label>
-									<div class="input-group">
-										<span class="input-group-text"><i
-												class="fa-solid fa-chalkboard-user"></i></span>
-										<select class="form-select"  th:field="*{numero}">
-											<option value="">--Todos--</option>
-											<option th:each="item: ${lstHabitaciones}" th:text="${item.numero}"
-												th:value="${item.numero}">
+    <div th:fragment="contenido">
 
-											</option>
-										</select>
-									</div>
-								</div>
-								<div class="col-md-3">
-									<label for="proveedor" class="form-label">Nomber Huesped</label>
-									<div class="input-group">
-										<span class="input-group-text" ><i class="fa-solid fa-truck-fast"></i></span>
-										<select class="form-select" th:field="*{nombres}">
-											<option value="">--Todos--
-											</option>
-											<option th:each="item: ${lstHuespedes}" th:text="${item.nombres}"
-												th:value="${item.nombres}">
+    <div class="container-fluid px-0">
+        <div class="card shadow-lg">
+            <div class="card-body">
 
-											</option>
-										</select>
-									</div>
-								</div>
-								<div class="col text-end">
-									<button type="submit" class="btn btn-outline-dark">
-										<i class="fa-solid fa-binoculars"></i> Buscar
-									</button>
-									<a th:href="@{/reserva/listado}" class="btn btn-outline-secondary">
-										<i class="fa-solid fa-broom"></i> Limpiar
-									</a>
-								</div>
-							</div>
-						</form>
-					</fieldset>
-				</div>
-				<div class="table-responsive overflow-auto" style="max-height: 70vh;">
-					<table class="table table-hover">
-						<thead class="table-dark text-center">
-							<tr class="position-sticky top-0">
-								<th>Id</th>
-								<th>Huésped</th>
-								<th>Habitación</th>
-								<th>Check In</th>
-								<th>Check Out Previsto</th>
-								<th>Check Out Real</th>
-								<th>Estado</th>
-								<th>Acciones</th>
-							</tr>
-						</thead>
-						<tbody class="table-secondary">
-							<tr th:each="item: ${lstReservas}">
-								<td th:text="${item.idReserva}" class="text-center"></td>
-								<td th:text="${item.huesped.fullName}"></td>
-								<td th:text="${item.habitacion.numero}"></td>
-								<td th:text="${item.fechaCheckin}"></td>
-								<td th:text="${item.fechaCheckoutPrevista}"></td>
-								<td th:text="${item.fechaCheckoutReal}"></td>
-								<td th:text="${item.estado}"></td>
-								<td class="d-flex justify-content-evenly align-items-center text-center">
-									<a th:href="@{/reserva/edicion/{id}(id=${item.idReserva})}"
-										class="btn btn-outline-primary" title="Editar" aria-label="Editar"
-										role="button">
-										<i class="fa-regular fa-pen-to-square"></i>
-									</a>
-									<form method="post" action="#">
-										<div class="form-switch">
-											<input class="form-check-input" type="checkbox">
-										</div>
-									</form>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
-	<th:block th:utext="${alert}"></th:block>
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="card-title">Listado de Reservas</h1>
+                    </div>
+
+                    <div class="col-md-2">
+                        <a th:href="@{/reserva/nuevo}"
+                           class="btn btn-success w-100">
+                            <i class="fa-solid fa-plus"></i>
+                            Nuevo
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <fieldset class="border border-2 border-dark px-2 pb-2">
+                        <legend class="float-none w-auto px-2">
+                            Filtros
+                        </legend>
+
+                        <form th:action="@{/reserva/listado}"
+                              method="get"
+                              th:object="${filter}">
+
+                            <div class="row align-items-end">
+
+                                <div class="col-md-3">
+
+                                    <!-- Etiqueta e icono de habitacion -->
+                                    <label for="numero" class="form-label">
+                                        Nro. Habitación
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-bed"></i>
+                                        </span>
+
+                                        <select class="form-select"
+                                                th:field="*{numero}">
+                                            <option value="">--Todos--</option>
+
+                                            <option th:each="item : ${lstHabitaciones}"
+                                                    th:text="${item.numero}"
+                                                    th:value="${item.numero}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+
+                                    <!-- Etiqueta e icono de huesped -->
+                                    <label for="nombres" class="form-label">
+                                        Nombre del huésped
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="fa-solid fa-user"></i>
+                                        </span>
+
+                                        <select class="form-select"
+                                                th:field="*{nombres}">
+                                            <option value="">--Todos--</option>
+
+                                            <option th:each="item : ${lstHuespedes}"
+                                                    th:text="${item.nombres}"
+                                                    th:value="${item.nombres}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col text-end">
+                                    <button type="submit"
+                                            class="btn btn-outline-dark">
+                                        <i class="fa-solid fa-binoculars"></i>
+                                        Buscar
+                                    </button>
+
+                                    <a th:href="@{/reserva/listado}"
+                                       class="btn btn-outline-secondary">
+                                        <i class="fa-solid fa-broom"></i>
+                                        Limpiar
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                </div>
+
+                <div class="table-responsive overflow-auto"
+                     style="max-height: 70vh;">
+
+                    <table class="table table-hover">
+                        <thead class="table-dark text-center">
+                            <tr class="position-sticky top-0">
+                                <th>Id</th>
+                                <th>Huésped</th>
+                                <th>Habitación</th>
+                                <th>Tarifa por noche (S/)</th>
+                                <th>Check In</th>
+                                <th>Check Out Previsto</th>
+                                <th>Check Out Real</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-secondary">
+                            <tr th:each="item : ${lstReservas}">
+
+                                <td th:text="${item.idReserva}"
+                                    class="text-center"></td>
+
+                                <td th:text="${item.huesped.fullName}"></td>
+
+                                <td th:text="${item.habitacion.numero}"
+                                    class="text-center"></td>
+
+                                <!-- Precio acordado de la reserva -->
+                                <td th:text="${#numbers.formatDecimal(
+                                        item.precioNocheAcordado, 1, 2)}"
+                                    class="text-end"></td>
+
+                                <td th:text="${item.fechaCheckin}"
+                                    class="text-center"></td>
+
+                                <td th:text="${item.fechaCheckoutPrevista}"
+                                    class="text-center"></td>
+
+                                <td th:text="${item.fechaCheckoutReal}"
+                                    class="text-center"></td>
+
+                                <!-- Descripcion del estado -->
+                                <td th:text="${item.estadoDescripcion}"
+                                    class="text-center"></td>
+
+                                <!-- Editar solo pendientes -->
+                                <td class="text-center">
+
+                                    <a th:if="${item.estado == 'P'}"
+                                       th:href="@{/reserva/edicion/{id}(
+                                           id=${item.idReserva})}"
+                                       class="btn btn-outline-primary"
+                                       title="Editar reserva"
+                                       aria-label="Editar reserva">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+
+                                    <span th:unless="${item.estado == 'P'}"
+                                          class="text-muted">
+                                        No editable
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                            <!-- Listado sin resultados -->
+                            <tr th:if="${#lists.isEmpty(lstReservas)}">
+                                <td colspan="9" class="text-center">
+                                    No se encontraron reservas.
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    </div>
 </body>
-
 </html>
