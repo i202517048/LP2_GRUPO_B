@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+<head><title>Hotel Morfeo - Inicio</title></head>
+<body>
+    <div th:fragment="contenido">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h1 class="card-title">Inicio</h1>
+                <p class="dashboard-intro mb-4">
+                    Selecciona un módulo para continuar con la gestión del hotel.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a th:href="@{/reserva/listado}" class="module-link">
+                            <div class="module-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></div>
+                            <h2>Reservas</h2>
+                            <p>Consulta las reservas y registra nuevas solicitudes de alojamiento.</p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a th:href="@{/habitaciones/listado}" class="module-link">
+                            <div class="module-icon"><i class="fa-solid fa-bed" aria-hidden="true"></i></div>
+                            <h2>Habitaciones</h2>
+                            <p>Consulta los tipos, tarifas y estados de las habitaciones.</p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a th:href="@{/servicios/listado}" class="module-link">
+                            <div class="module-icon"><i class="fa-solid fa-bell-concierge" aria-hidden="true"></i></div>
+                            <h2>Servicios adicionales</h2>
+                            <p>Administra el catálogo de servicios y sus precios.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
