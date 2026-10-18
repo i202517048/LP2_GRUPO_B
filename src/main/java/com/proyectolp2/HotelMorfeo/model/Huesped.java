@@ -6,35 +6,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "huespedes")
+@Table(name = "tbl_huespedes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Huesped {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_huesped")
-    private Integer idHuesped;
 
-    @Column(name = "nombres", nullable = false, length = 100)
-    private String nombres;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_huesped")
+	private Integer idHuesped;
 
-    @Column(name = "apellidos", nullable = false, length = 100)
-    private String apellidos;
+	@Column(name = "nombres", nullable = false, length = 100)
+	private String nombres;
 
-    @Column(name = "documento", nullable = false, unique = true, length = 20)
-    private String documento;
+	@Column(name = "apellidos", nullable = false, length = 100)
+	private String apellidos;
 
-    @Column(name = "telefono", length = 20)
-    private String telefono;
+	@Column(name = "documento", nullable = false, unique = true, length = 20)
+	private String documento;
 
-    @Column(name = "email", length = 100)
-    private String email;
+	@Column(name = "telefono", length = 20)
+	private String telefono;
 
-    @Column(name = "activo_huespedes")
-    private Integer activoHuespedes = 1;
-    
-    public String getFullName (){
-    	return nombres +" " + apellidos + "";
-    }
+	@Column(name = "email", length = 100)
+	private String email;
+
+	@Column(name = "activo_huespedes", nullable = false)
+	private Integer activoHuespedes = 1;
+
+	public String getFullName() {
+		return String.format("%s %s", nombres, apellidos);
+	}
+
+	public String getActivoDescripcion() {
+		return Integer.valueOf(1).equals(activoHuespedes) ? "Activo" : "Inactivo";
+	}
 }

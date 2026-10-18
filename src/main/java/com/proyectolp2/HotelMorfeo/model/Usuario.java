@@ -1,10 +1,13 @@
 package com.proyectolp2.HotelMorfeo.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
+import lombok.ToString;
 
 @Entity
 @Table(name = "tbl_usuarios")
@@ -12,30 +15,41 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario")
-    private Integer idUsuario;
 
-    @Column(name = "nombres", nullable = false, length = 45)
-    private String nombres;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_usuario")
+	private Integer idUsuario;
 
-    @Column(name = "apellidos", nullable = false, length = 45)
-    private String apellidos;
+	@Column(name = "nombres", nullable = false, length = 45)
+	private String nombres;
 
-    @Column(name = "cuenta", nullable = false, length = 45)
-    private String cuenta;
+	@Column(name = "apellidos", nullable = false, length = 45)
+	private String apellidos;
 
-    @Column(name = "clave", nullable = false, length = 45)
-    private String clave;
+	@Column(name = "cuenta", nullable = false, unique = true, length = 45)
+	private String cuenta;
 
-    @Column(name = "fecha_nac")
-    private LocalDate fechaNac;
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	@Column(name = "clave", nullable = false, length = 255)
+	private String clave;
 
-    @Column(name = "activo")
-    private Boolean activo = true;
+	@Column(name = "fecha_nac")
+	private LocalDate fechaNac;
 
-    @ManyToOne
-    @JoinColumn(name = "id_rol")
-    private Rol rol;
+	@Column(name = "activo", nullable = false)
+	private Boolean activo = true;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_rol", nullable = false)
+	private Rol rol;
+
+	public String getFullName() {
+		return String.format("%s %s", nombres, apellidos);
+	}
+
+	public String getActivoDescripcion() {
+		return Boolean.TRUE.equals(activo) ? "Activo" : "Inactivo";
+	}
 }

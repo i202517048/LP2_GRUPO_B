@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
 <head>
-    <meta charset="UTF-8">
     <title>Hotel Morfeo - Nueva Habitación</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css">
 </head>
-
 <body>
+    <div th:fragment="contenido">
 
-    <div class="container mt-5">
+
+    <div class="container-fluid px-0">
         <div class="card shadow-lg">
             <div class="card-body">
 
@@ -34,7 +30,8 @@
                               class="row g-2">
 
                             <div class="col-md-6">
-                                <label class="form-label">
+                                <!-- Asociar etiqueta al campo -->
+                                <label for="numero" class="form-label">
                                     Número de habitación
                                 </label>
 
@@ -53,7 +50,8 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">
+                                <!-- Asociar etiqueta al campo -->
+                                <label for="tipo" class="form-label">
                                     Tipo de habitación
                                 </label>
 
@@ -77,7 +75,8 @@
                             </div>
 							
                             <div class="col-md-6">
-                                <label class="form-label">
+                                <!-- Asociar etiqueta al campo -->
+                                <label for="precioNoche" class="form-label">
                                     Precio por noche (S/)
                                 </label>
 
@@ -98,7 +97,8 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label">
+                                <!-- Etiqueta del estado informativo -->
+                                <label for="estadoVista" class="form-label">
                                     Estado
                                 </label>
 
@@ -107,12 +107,20 @@
                                         <i class="fa-solid fa-circle-info"></i>
                                     </span>
 
+                                    <!-- Estado inicial informativo; no se envia -->
                                     <input type="text"
-                                           th:field="*{estado}"
+                                           id="estadoVista"
+                                           value="Disponible"
                                            class="form-control"
-                                           maxlength="1"
-                                           required>
+                                           aria-describedby="notaEstado"
+                                           readonly>
                                 </div>
+								
+                                <!-- Regla de registro del servicio -->
+                                <div id="notaEstado" class="form-text">
+                                    Se registrará disponible y activa.
+                                </div>
+
                             </div>
 
                             <div class="col-md-12 d-flex justify-content-between mt-3">
@@ -146,5 +154,7 @@
         </div>
     </div>
 
+
+    </div>
 </body>
 </html>

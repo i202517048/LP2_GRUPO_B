@@ -1,154 +1,293 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
 <head>
-	<meta charset="UTF-8" />
-	<title>Hotel Morfeo - Edición Registro</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+    <title>Hotel Morfeo - Reserva Edición</title>
 </head>
-
 <body>
-	<div class="container mt-5">
-		<div class="card shadow-lg">
-			<div class="card-body">
-				<h1 class="card-title text-center">Reserva Edición</h1>
-				<div class="row d-flex justify-content-center">
-					<div class="col-md-6">
-						<form th:action="@{/reserva/grabar}" class="row g-2" method="post" novalidate
-							th:object="${reserva}">
-							
-							<input type="hidden" th:field="*{idReserva}"/>
-							<input type="hidden" th:field="*{estado}">
+    <div th:fragment="contenido">
 
-							<!-- Nombre Huésped -->
-							<div class="col-md-6 position-relative">
-								<label for="huespedes" class="form-label">Nombre</label>
-								<div class="input-group">
-									<span class="input-group-text">
-										<i class="fa-solid fa-user"></i>
-									</span>
-									<select class="form-select" th:field="*{huesped.idHuesped}">
-										<option value="" selected hidden="hidden">
-											--Seleccione--
-										</option>
-										
-										<option
-											th:each="item: ${lstHuespedes}"
-											th:text="${item.fullName}"
-											th:value="${item.idHuesped}">
-											
-										</option>
-										
-									</select>
-								</div>
-							</div>
-							
-							<!-- Nro. Habitacion -->
-							<div class="col-md-6 position-relative">
-								<label for="habitaciones" class="form-label">Nro. Habitación</label>
-								<div class="input-group">
-									<span class="input-group-text">
-										<i class="fa-solid fa-user"></i>
-									</span>
-									<select class="form-select" th:field="*{habitacion.idHabitacion}">
-										<option value="" selected hidden="hidden">
-											--Seleccione--
-										</option>
-										
-										<option
-											th:each="item: ${lstHabitaciones}"
-											th:text="${item.numero}"
-											th:value="${item.idHabitacion}">
-											
-										</option>
-										
-									</select>
-								</div>
-							</div>
+    <div class="container-fluid px-0">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h1 class="card-title text-center">Reserva Edición</h1>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-6">
 
-							<!-- Fecha Check In -->
-							<div class="col-md-6 position-relative">
-								<label for="fechaCheckin" class="form-label">
-									Fecha Check In
-								</label>
-								<div class="input-group">
-									<span class="input-group-text">
-										<i class="fa-solid fa-calendar-days"></i>
-									</span>
-									<input type="text" class="form-control" 
-										th:field="*{fechaCheckin}"
-										>
-								</div>
-							</div>
+                        <!-- Mostrar errores devueltos por Java -->
+                        <div th:if="${error != null}"
+                             th:text="${error}"
+                             class="alert alert-danger"
+                             role="alert">
+                        </div>
 
-							<!-- Fecha Check Out Prevista -->
-							<div class="col-md-6 position-relative">
-								<label for="fechaCheckoutPrevista" class="form-label">
-									Fecha Check Out Prevista
-								</label>
-								<div class="input-group">
-									<span class="input-group-text">
-										<i class="fa-solid fa-calendar-check"></i>
-									</span>
-									<input type="text" class="form-control" 
-										th:field="*{fechaCheckoutPrevista}"
-										>
-								</div>
-							</div>
+                        <!-- ID para validar y datos de vista previa -->
+                        <form id="frm-reserva"
+                              th:action="@{/reserva/grabar}"
+                              th:object="${reserva}"
+                              class="row g-2"
+                              method="post"
+                              data-modo="edicion"
+                              th:attr="data-habitacion-original=${idHabitacionOriginal},
+                                       data-tarifa-acordada=${reserva.precioNocheAcordado}"
+                              novalidate>
 
-							<div class="col-md-12 d-flex justify-content-between">
-								<!-- Botón Regresar -->
-								<a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
-									<i class="fa-solid fa-reply"></i> Regresar
-								</a>
-								<!-- Botón Registrar -->
-								<button type="submit" class="btn btn-primary">
-									<i class="fa-solid fa-floppy-disk"></i> Grabar
-								</button>
-								<!-- Botón Limpiar -->
-								<button type="reset" class="btn btn-secondary">
-									<i class="fa-solid fa-broom"></i> Limpiar
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script type="text/javascript">
-		$(document)
-			.ready(
-				function () {
-					$("")
-						.validate(
-							{
-								rules: {
+                            <!-- Conservar solo el ID de la reserva -->
+                            <input type="hidden" th:field="*{idReserva}">
+                            <!-- El estado y la tarifa son controlados por el servidor -->
 
-								},
-								messages: {
 
-								},
-								errorElement: 'div',
-								errorClass: 'invalid-tooltip',
-								highlight: function (element) {
-									$(element).addClass(
-										'is-invalid')
-										.removeClass(
-											'is-valid');
-								},
-								unhighlight: function (element) {
-									$(element).removeClass(
-										'is-invalid')
-										.addClass(
-											'is-valid');
-								}
-							});
-				});
-	</script>
+                            <!-- Nombre huésped -->
+                            <div class="col-md-6 position-relative">
+                                <label for="huesped" class="form-label">Nombre</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-user"></i>
+                                    </span>
+                                    <select id="huesped" class="form-select"
+                                            th:field="*{huesped.idHuesped}">
+                                        <option value="">--Seleccione--</option>
+                                        <option th:each="item : ${lstHuespedes}"
+                                                th:text="${item.fullName}"
+                                                th:value="${item.idHuesped}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Nro. habitación -->
+                            <div class="col-md-6 position-relative">
+                                <label for="habitacion" class="form-label">Nro. Habitación</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-bed"></i>
+                                    </span>
+                                    <select id="habitacion" class="form-select"
+                                            th:field="*{habitacion.idHabitacion}">
+                                        <option value="">--Seleccione--</option>
+                                        <!-- Precio para vista previa -->
+                                        <option th:each="item : ${lstHabitaciones}"
+                                                th:text="${item.numero}"
+                                                th:value="${item.idHabitacion}"
+                                                th:attr="data-precio=${item.precioNoche}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Fechas ISO y tarifa de solo lectura -->
+							<!-- //////////////// -->
+                            <div class="col-md-6 position-relative">
+                                <label for="fechaCheckin" class="form-label">Fecha Check In</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                    </span>
+                                    <input type="date" class="form-control"
+                                           th:field="*{fechaCheckin}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 position-relative">
+                                <label for="fechaCheckoutPrevista" class="form-label">
+                                    Fecha Check Out Prevista
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-calendar-check"></i>
+                                    </span>
+                                    <input type="date" class="form-control"
+                                           th:field="*{fechaCheckoutPrevista}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="tarifaVista" class="form-label">
+                                    Tarifa por noche (vista previa)
+                                </label>
+                                <input id="tarifaVista" type="text"
+                                       class="form-control" readonly
+                                       aria-describedby="notaTarifa">
+                                <div id="notaTarifa" class="form-text">
+                                    Si conserva la habitación, mantiene la tarifa acordada. Si cambia de habitación, se aplicará su tarifa vigente.
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <span class="fw-bold">Estado: </span>
+                                <span th:text="${reserva.estadoDescripcion}"></span>
+                            </div>
+
+                            <!-- //////////////// -->
+
+                            <div class="col-md-12 d-flex justify-content-between mt-3">
+                                <a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
+                                    <i class="fa-solid fa-reply"></i> Regresar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Grabar
+                                </button>
+                                <button type="reset" class="btn btn-secondary">
+                                    <i class="fa-solid fa-broom"></i>
+                                    Restablecer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validacion, tarifa orientativa y confirmacion -->
+    <script>
+        $(document).ready(function () {
+            const formulario = document.getElementById("frm-reserva");
+            const selectorHabitacion = document.getElementById("habitacion");
+            const campoTarifa = document.getElementById("tarifaVista");
+            const modoEdicion = formulario.dataset.modo === "edicion";
+
+            const formatoMoneda = new Intl.NumberFormat("es-PE", {
+                style: "currency",
+                currency: "PEN"
+            });
+
+            function obtenerTarifa() {
+                const opcion = selectorHabitacion.options[
+                    selectorHabitacion.selectedIndex];
+
+                if (!opcion || !opcion.value) {
+                    return null;
+                }
+
+                const mismaHabitacion = modoEdicion
+                    && opcion.value === formulario.dataset.habitacionOriginal;
+
+                const valor = mismaHabitacion
+                    ? formulario.dataset.tarifaAcordada
+                    : opcion.dataset.precio;
+
+                if (!valor || !valor.trim()) {
+                    return null;
+                }
+
+                const tarifa = Number(valor);
+                return Number.isFinite(tarifa) && tarifa > 0 ? tarifa : null;
+            }
+
+            function actualizarTarifa() {
+                const tarifa = obtenerTarifa();
+                campoTarifa.value = tarifa === null
+                    ? "Seleccione una habitación"
+                    : formatoMoneda.format(tarifa);
+            }
+
+            selectorHabitacion.addEventListener("change", actualizarTarifa);
+            actualizarTarifa();
+
+            $.validator.addMethod("salidaPosterior", function (value, element) {
+                const entrada = document.getElementById("fechaCheckin").value;
+                return this.optional(element) || !entrada || value > entrada;
+            }, "La salida prevista debe ser posterior a la entrada.");
+
+            const validador = $(formulario).validate({
+                rules: {
+                    "huesped.idHuesped": {
+                        required: true
+                    },
+                    "habitacion.idHabitacion": {
+                        required: true
+                    },
+                    fechaCheckin: {
+                        required: true,
+                        dateISO: true
+                    },
+                    fechaCheckoutPrevista: {
+                        required: true,
+                        dateISO: true,
+                        salidaPosterior: true
+                    }
+                },
+                messages: {
+                    "huesped.idHuesped": {
+                        required: "Seleccione un huésped."
+                    },
+                    "habitacion.idHabitacion": {
+                        required: "Seleccione una habitación."
+                    },
+                    fechaCheckin: {
+                        required: "Ingrese la fecha de entrada.",
+                        dateISO: "Ingrese una fecha válida."
+                    },
+                    fechaCheckoutPrevista: {
+                        required: "Ingrese la salida prevista.",
+                        dateISO: "Ingrese una fecha válida.",
+                        salidaPosterior: "La salida prevista debe ser posterior a la entrada."
+                    }
+                },
+                errorElement: "div",
+                errorClass: "invalid-feedback d-block",
+                errorPlacement: function (error, element) {
+                    error.insertAfter(element.closest(".input-group"));
+                },
+                highlight: function (element) {
+                    $(element).addClass("is-invalid").removeClass("is-valid");
+                },
+                unhighlight: function (element) {
+                    $(element).removeClass("is-invalid").addClass("is-valid");
+                },
+                submitHandler: function (form) {
+                    const tarifa = obtenerTarifa();
+
+                    if (tarifa === null) {
+                        Swal.fire("Revise la tarifa",
+                            "No se pudo obtener una tarifa válida. Recargue el formulario.",
+                            "error");
+                        return false;
+                    }
+
+                    const texto = "Tarifa por noche mostrada: "
+                        + formatoMoneda.format(tarifa)
+                        + ". Es una vista previa: el servidor comprobará los datos "
+                        + "y la tarifa aplicable al guardar.";
+
+                    Swal.fire({
+                        title: modoEdicion ? "¿Guardar los cambios?" : "¿Registrar la reserva?",
+                        text: texto,
+                        icon: "question",
+                        showCancelButton: true,
+                        confirmButtonText: "Confirmar",
+                        cancelButtonText: "Volver"
+                    }).then(function (resultado) {
+                        if (resultado.isConfirmed) {
+                            $(form).find('button[type="submit"]').prop("disabled", true);
+                            form.submit();
+                        }
+                    });
+
+                    return false;
+                }
+            });
+
+            $("#fechaCheckin").on("change", function () {
+                if ($("#fechaCheckoutPrevista").val()) {
+                    validador.element("#fechaCheckoutPrevista");
+                }
+            });
+
+            formulario.addEventListener("reset", function () {
+                window.setTimeout(function () {
+                    validador.resetForm();
+                    $(formulario).find(".is-valid, .is-invalid")
+                        .removeClass("is-valid is-invalid");
+                    actualizarTarifa();
+                }, 0);
+            });
+        });
+    </script>
+
+
+    </div>
 </body>
+</html>
