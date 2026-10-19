@@ -28,6 +28,10 @@ public class HabitacionesService {
 		return habitacionesRepository.findAllByOrderByNumeroAsc();
 	}
 
+	public List<Habitacion> getAllByIdDesc() {
+		return habitacionesRepository.findAllByOrderByIdHabitacionDesc();
+	}
+
 	@Transactional
 	public ResultadoResponse create(Habitacion habitacion) {
 

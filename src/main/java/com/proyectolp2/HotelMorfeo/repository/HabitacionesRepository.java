@@ -10,6 +10,8 @@ import com.proyectolp2.HotelMorfeo.model.Habitacion;
 
 public interface HabitacionesRepository extends JpaRepository<Habitacion, Integer> {
 	
+	List<Habitacion> findAllByOrderByIdHabitacionDesc();
+	
 	List<Habitacion> findAllByOrderByNumeroAsc();
 	
 	boolean existsByNumeroIgnoreCase(String numero);

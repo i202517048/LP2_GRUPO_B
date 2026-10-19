@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+
+<head>
+	<title>Hotel Morfeo - Edición de Huésped</title>
+</head>
+
+<body>
+	<div th:fragment="contenido">
+
+		<div class="container-fluid px-0">
+			<div class="card shadow-lg">
+				<div class="card-body">
+					<h1 class="card-title text-center">Edición de Huésped</h1>
+					<div class="row d-flex justify-content-center">
+						<div class="col-md-6">
+							<div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert">
+							</div>
+
+							<form id="frm-huesped" th:action="@{/huespedes/grabar}" th:object="${huesped}"
+								class="row g-2" method="post" novalidate>
+
+								<!-- Identificador de edición -->
+								<input type="hidden" th:field="*{idHuesped}">
+								<!-- La activación se modifica desde el listado -->
+
+								<div class="col-md-6 position-relative">
+									<label for="nombres" class="form-label">Nombres</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="fa-solid fa-user"></i>
+										</span>
+										<input type="text" th:field="*{nombres}" class="form-control" maxlength="100"
+											autocomplete="given-name" required>
+									</div>
+								</div>
+
+								<div class="col-md-6 position-relative">
+									<label for="apellidos" class="form-label">Apellidos</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="fa-solid fa-user"></i>
+										</span>
+										<input type="text" th:field="*{apellidos}" class="form-control" maxlength="100"
+											autocomplete="family-name" required>
+									</div>
+								</div>
+
+								<div class="col-md-12 position-relative">
+									<label for="documento" class="form-label">Documento</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="fa-solid fa-id-card"></i>
+										</span>
+										<input type="text" th:field="*{documento}" class="form-control" maxlength="20"
+											required>
+									</div>
+								</div>
+
+								<div class="col-md-6 position-relative">
+									<label for="telefono" class="form-label">Teléfono (opcional)</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="fa-solid fa-phone"></i>
+										</span>
+										<input type="text" th:field="*{telefono}" class="form-control" maxlength="20"
+											autocomplete="tel" inputmode="tel">
+									</div>
+								</div>
+
+								<div class="col-md-6 position-relative">
+									<label for="email" class="form-label">Correo electrónico (opcional)</label>
+									<div class="input-group">
+										<span class="input-group-text">
+											<i class="fa-solid fa-envelope"></i>
+										</span>
+										<input type="text" th:field="*{email}" class="form-control" maxlength="100"
+											autocomplete="email" inputmode="email">
+									</div>
+								</div>
+
+								<div class="col-md-12 d-flex justify-content-between mt-3">
+									<a th:href="@{/huespedes/listado}" class="btn btn-outline-dark">
+										<i class="fa-solid fa-reply"></i> Regresar
+									</a>
+									<button type="submit" class="btn btn-primary">
+										<i class="fa-solid fa-floppy-disk"></i> Grabar
+									</button>
+									<button type="reset" class="btn btn-secondary">
+										<i class="fa-solid fa-rotate-left"></i> Restablecer
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			$(document).ready(function () {
+				const formulario = document.getElementById("frm-huesped");
+
+				$.validator.addMethod("telefonoHuesped", function (value, element) {
+					return this.optional(element)
+						|| (/^\+?[0-9() -]+$/.test(value) && /[0-9]/.test(value));
+				}, "Ingrese un teléfono válido.");
+
+				$.validator.addMethod("correoHuesped", function (value, element) {
+					return this.optional(element)
+						|| /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+				}, "Ingrese un correo electrónico válido.");
+
+				const validador = $(formulario).validate({
+					normalizer: function (value) {
+						return value.trim();
+					},
+					rules: {
+						nombres: {
+							required: true,
+							maxlength: 100
+						},
+						apellidos: {
+							required: true,
+							maxlength: 100
+						},
+						documento: {
+							required: true,
+							maxlength: 20
+						},
+						telefono: {
+							maxlength: 20,
+							telefonoHuesped: true
+						},
+						email: {
+							maxlength: 100,
+							correoHuesped: true
+						}
+					},
+					messages: {
+						nombres: {
+							required: "Ingrese los nombres del huésped.",
+							maxlength: "Ingrese como máximo 100 caracteres."
+						},
+						apellidos: {
+							required: "Ingrese los apellidos del huésped.",
+							maxlength: "Ingrese como máximo 100 caracteres."
+						},
+						documento: {
+							required: "Ingrese el documento del huésped.",
+							maxlength: "Ingrese como máximo 20 caracteres."
+						},
+						telefono: {
+							maxlength: "Ingrese como máximo 20 caracteres.",
+							telefonoHuesped: "Utilice números, espacios, paréntesis, guiones y el signo + al inicio."
+						},
+						email: {
+							maxlength: "Ingrese como máximo 100 caracteres.",
+							correoHuesped: "Ingrese un correo electrónico válido."
+						}
+					},
+					errorElement: "div",
+					errorClass: "invalid-feedback d-block",
+					errorPlacement: function (error, element) {
+						error.insertAfter(element.closest(".input-group"));
+					},
+					highlight: function (element) {
+						$(element).addClass("is-invalid").removeClass("is-valid");
+					},
+					unhighlight: function (element) {
+						$(element).removeClass("is-invalid").addClass("is-valid");
+					}
+				});
+
+				formulario.addEventListener("reset", function () {
+					window.setTimeout(function () {
+						validador.resetForm();
+						$(formulario).find(".is-valid, .is-invalid")
+							.removeClass("is-valid is-invalid");
+					}, 0);
+				});
+			});
+		</script>
+
+	</div>
+</body>
+
+</html>
