@@ -3,9 +3,12 @@
 
 <head>
 	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Hotel Morfeo - Acceso del Personal</title>
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
+
 </head>
 
 <body>
@@ -14,48 +17,51 @@
 			<div class="col-md-5">
 				<div class="card shadow-lg">
 					<div class="card-body">
-						<h1 class="card-title text-center">
-							Hotel Morfeo
-						</h1>
-
-						<p class="text-center">
-							Acceso del personal
-						</p>
+						<h1 class="card-title text-center">Hotel Morfeo</h1>
+						<p class="text-center">Acceso del personal</p>
 
 						<div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert">
 						</div>
 
-						<div th:if="${param.logout != null}" class="alert alert-success" role="status">
+						<!-- No mostrar cierre exitoso junto a un error de acceso -->
+						<div th:if="${param.logout != null and error == null}" class="alert alert-success"
+							role="status">
 							Sesión cerrada correctamente.
 						</div>
 
-						<form th:action="@{/login}" method="post" class="row g-3">
+						<!-- DTO y campos del formulario -->
+						<form th:action="@{/login}" th:object="${filter}" method="post" class="row g-3">
 
 							<div class="col-md-12">
-								<label for="cuenta" class="form-label">
-									Cuenta
-								</label>
-
-								<input type="text" id="cuenta" name="cuenta" th:value="${cuenta}" class="form-control"
-									maxlength="45" autocomplete="username" required>
+								<label for="cuenta" class="form-label">Cuenta</label>
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-user" aria-hidden="true"></i>
+									</span>
+									<input type="text" th:field="*{cuenta}" class="form-control" maxlength="45"
+										autocomplete="username" placeholder="Ingrese su cuenta" required>
+								</div>
 							</div>
 
 							<div class="col-md-12">
-								<label for="clave" class="form-label">
-									Contraseña
-								</label>
+								<label for="clave" class="form-label">Contraseña</label>
+								<div class="input-group">
+									<span class="input-group-text">
+										<i class="fa-solid fa-key" aria-hidden="true"></i>
+									</span>
 
-								<input type="password" id="clave" name="clave" class="form-control"
-									autocomplete="current-password" required>
+									<input type="password" id="clave" name="clave" class="form-control"
+										autocomplete="current-password" placeholder="Ingrese su contraseña" required>
+								</div>
 							</div>
 
 							<div class="col-md-12">
 								<button type="submit" class="btn btn-primary w-100">
+									<i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
 									Ingresar
 								</button>
 							</div>
 						</form>
-
 					</div>
 				</div>
 			</div>
