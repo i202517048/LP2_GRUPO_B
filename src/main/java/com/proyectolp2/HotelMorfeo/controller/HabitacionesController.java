@@ -26,7 +26,7 @@ public class HabitacionesController {
 
 	@GetMapping("listado")
 	public String listado(Model model) {
-		model.addAttribute("lstHabitaciones", habitacionesService.getAll());
+		model.addAttribute("lstHabitaciones", habitacionesService.getAllByIdDesc());
 
 		return "habitaciones/listado";
 	}
@@ -34,106 +34,89 @@ public class HabitacionesController {
 	@GetMapping("nuevo")
 	public String nuevo(Model model) {
 
-	    Habitacion habitacion = new Habitacion();
-	
-	    habitacion.setEstado("D");
-	    habitacion.setActivoHabitaciones(true);
-	
-	    model.addAttribute("habitacion", habitacion);
-	
-	    return "habitaciones/nuevo";
-	}
+		Habitacion habitacion = new Habitacion();
 
+		habitacion.setEstado("D");
+		habitacion.setActivoHabitaciones(true);
+
+		model.addAttribute("habitacion", habitacion);
+
+		return "habitaciones/nuevo";
+	}
 
 	@PostMapping("registrar")
-	public String registrar(
-	        @ModelAttribute("habitacion") Habitacion habitacion,
-	        BindingResult bindingResult,
-	        Model model,
-	        RedirectAttributes flash) {
-	
-	    if (bindingResult.hasErrors()) {
-	        model.addAttribute("error", "Revise los datos ingresados.");
-	        return "habitaciones/nuevo";
-	    }
-	
-	    var response = habitacionesService.create(habitacion);
-	
-	    if (!response.success()) {
-	        model.addAttribute("error", response.mensaje());
-	        return "habitaciones/nuevo";
-	    }
-	
-	    var alert = Alert.sweetToast(
-	        response.mensaje(), "success", 5000);
-	
-	    flash.addFlashAttribute("alert", alert);
-	
-	    return "redirect:/habitaciones/listado";
+	public String registrar(@ModelAttribute("habitacion") Habitacion habitacion, BindingResult bindingResult,
+			Model model, RedirectAttributes flash) {
+
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("error", "Revise los datos ingresados.");
+			return "habitaciones/nuevo";
+		}
+
+		var response = habitacionesService.create(habitacion);
+
+		if (!response.success()) {
+			model.addAttribute("error", response.mensaje());
+			return "habitaciones/nuevo";
+		}
+
+		var alert = Alert.sweetToast(response.mensaje(), "success", 5000);
+
+		flash.addFlashAttribute("alert", alert);
+
+		return "redirect:/habitaciones/listado";
 	}
-	
+
 	@GetMapping("edicion/{id}")
-	public String edicion(@PathVariable Integer id,
-	        Model model, RedirectAttributes flash) {
+	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash) {
 
-	    var habitacion = habitacionesService.getOne(id);
+		var habitacion = habitacionesService.getOne(id);
 
-	    if (habitacion == null) {
-	        var alert = Alert.sweetToast(
-	            "La habitación no existe.", "error", 5000);
+		if (habitacion == null) {
+			var alert = Alert.sweetToast("La habitación no existe.", "error", 5000);
 
-	        flash.addFlashAttribute("alert", alert);
-	        return "redirect:/habitaciones/listado";
-	    }
+			flash.addFlashAttribute("alert", alert);
+			return "redirect:/habitaciones/listado";
+		}
 
-	    model.addAttribute("habitacion", habitacion);
+		model.addAttribute("habitacion", habitacion);
 
-	    return "habitaciones/edicion";
+		return "habitaciones/edicion";
 	}
-	
+
 	@PostMapping("grabar")
-	public String grabar(
-	        @ModelAttribute("habitacion") Habitacion habitacion,
-	        BindingResult bindingResult,
-	        Model model,
-	        RedirectAttributes flash) {
+	public String grabar(@ModelAttribute("habitacion") Habitacion habitacion, BindingResult bindingResult, Model model,
+			RedirectAttributes flash) {
 
-	    if (bindingResult.hasErrors()) {
-	        model.addAttribute("error", "Revise los datos ingresados.");
-	        return "habitaciones/edicion";
-	    }
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("error", "Revise los datos ingresados.");
+			return "habitaciones/edicion";
+		}
 
-	    var response = habitacionesService.update(habitacion);
+		var response = habitacionesService.update(habitacion);
 
-	    if (!response.success()) {
-	        model.addAttribute("error", response.mensaje());
-	        return "habitaciones/edicion";
-	    }
+		if (!response.success()) {
+			model.addAttribute("error", response.mensaje());
+			return "habitaciones/edicion";
+		}
 
-	    var alert = Alert.sweetToast(
-	        response.mensaje(), "success", 5000);
+		var alert = Alert.sweetToast(response.mensaje(), "success", 5000);
 
-	    flash.addFlashAttribute("alert", alert);
+		flash.addFlashAttribute("alert", alert);
 
-	    return "redirect:/habitaciones/listado";
+		return "redirect:/habitaciones/listado";
 	}
-	
+
 	@PostMapping("estado")
-	public String cambiarEstado(
-	        @RequestParam Integer id,
-	        RedirectAttributes flash) {
+	public String cambiarEstado(@RequestParam Integer id, RedirectAttributes flash) {
 
-	    var response = habitacionesService.cambiarEstado(id);
+		var response = habitacionesService.cambiarEstado(id);
 
-	    var alert = Alert.sweetToast(
-	        response.mensaje(),
-	        response.success() ? "success" : "error",
-	        5000
-	    );
+		var alert = Alert.sweetToast(response.mensaje(), response.success() ? "success" : "error", 5000);
 
-	    flash.addFlashAttribute("alert", alert);
+		flash.addFlashAttribute("alert", alert);
 
-	    return "redirect:/habitaciones/listado";
+		return "redirect:/habitaciones/listado";
 	}
-	
+
 }

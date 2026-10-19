@@ -14,38 +14,47 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 	List<Reserva> findAllByOrderByIdReservaDesc();
 
 	@Query("""
-				select r from Reserva r
-				where
-					(:numero is null or :numero = '' or r.habitacion.numero = :numero)
-					and
-					(:nombres is null or :nombres = '' or r.huesped.nombres = :nombres)
+			select r from Reserva r
+			where
+				(:numero is null or :numero = '' or r.habitacion.numero = :numero)
+				and
+				(:nombres is null or :nombres = '' or r.huesped.nombres = :nombres)
 			""")
 	List<Reserva> findByFilters(@Param("numero") String numero, @Param("nombres") String nombres);
 
-	// Comprobar superposicion de reservas P/A
+	// Comprobar superposición de reservas P/A
 	@Query("""
 			select count(r)
 			from Reserva r
 			where r.habitacion.idHabitacion = :idHabitacion
-			    and r.estado in ('P', 'A')
-			    and r.fechaCheckin < :fechaSalida
-			    and r.fechaCheckoutPrevista > :fechaEntrada
-			    and (
-			        :idReservaExcluir is null
-			        or r.idReserva <> :idReservaExcluir
-			    )
+				and r.estado in ('P', 'A')
+				and r.fechaCheckin < :fechaSalida
+				and r.fechaCheckoutPrevista > :fechaEntrada
+				and (
+					:idReservaExcluir is null
+					or r.idReserva <> :idReservaExcluir
+				)
 			""")
 	long contarReservasSuperpuestas(@Param("idHabitacion") Integer idHabitacion,
 			@Param("fechaEntrada") LocalDate fechaEntrada, @Param("fechaSalida") LocalDate fechaSalida,
 			@Param("idReservaExcluir") Integer idReservaExcluir);
 
-	// Comprobar compromisos de una habitacion
+	// Comprobar compromisos de una habitación
 	@Query("""
 			select count(r)
 			from Reserva r
 			where r.habitacion.idHabitacion = :idHabitacion
-			    and r.estado in ('P', 'A')
+				and r.estado in ('P', 'A')
 			""")
 	long contarReservasPendientesOActivas(@Param("idHabitacion") Integer idHabitacion);
 
+	// INICIO ADAPTACION HREP04: comprobar compromisos de un huésped
+	@Query("""
+			select count(r)
+			from Reserva r
+			where r.huesped.idHuesped = :idHuesped
+				and r.estado in ('P', 'A')
+			""")
+	long contarReservasPendientesOActivasPorHuesped(@Param("idHuesped") Integer idHuesped);
+	// FIN ADAPTACION HREP04
 }
