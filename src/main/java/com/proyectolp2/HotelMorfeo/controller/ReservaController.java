@@ -20,6 +20,10 @@ import com.proyectolp2.HotelMorfeo.service.HuespedesService;
 import com.proyectolp2.HotelMorfeo.service.ReservaService;
 import com.proyectolp2.HotelMorfeo.util.Alert;
 
+import com.proyectolp2.HotelMorfeo.dto.UsuarioSesion;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -32,7 +36,23 @@ public class ReservaController {
 	private final HabitacionesService habitacionesService;
 
 	@GetMapping("listado")
-	public String listado(@ModelAttribute ReservaFilter filter, Model model) {
+	public String listado(@ModelAttribute ReservaFilter filter, Model model, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+		// -------------------------------
 
 		model.addAttribute("lstReservas", reservaService.search(filter));
 		model.addAttribute("filter", filter);
@@ -43,7 +63,23 @@ public class ReservaController {
 	}
 
 	@GetMapping("nuevo")
-	public String nuevo(Model model) {
+	public String nuevo(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+		// -------------------------------
+
 		model.addAttribute("lstHuespedes", huespedesService.getAll());
 		model.addAttribute("lstHabitaciones", habitacionesService.getAll());
 		model.addAttribute("reservas", new Reserva());
@@ -55,7 +91,22 @@ public class ReservaController {
 	// ------------------
 	@PostMapping("registrar")
 	public String registrar(@ModelAttribute("reservas") Reserva reservas, BindingResult bindingResult, Model model,
-			RedirectAttributes flash) {
+			RedirectAttributes flash, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+		// -------------------------------
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "Revise los datos ingresados.");
@@ -86,7 +137,23 @@ public class ReservaController {
 	// Consultar una vez y permitir edicion solo de P
 	// ------------------
 	@GetMapping("edicion/{id}")
-	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash) {
+	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+		// -------------------------------
 
 		var reserva = reservaService.getOne(id);
 
@@ -116,7 +183,22 @@ public class ReservaController {
 	// ------------------
 	@PostMapping("grabar")
 	public String grabar(@ModelAttribute("reserva") Reserva reservas, BindingResult bindingResult, Model model,
-			RedirectAttributes flash) {
+			RedirectAttributes flash, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+		// -------------------------------
 
 		if (reservas.getIdReserva() == null) {
 			flash.addFlashAttribute("alert", Alert.sweetToast("Debe indicar una reserva válida.", "error", 5000));

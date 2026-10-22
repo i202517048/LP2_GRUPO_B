@@ -55,7 +55,10 @@
 												<i class="fa-regular fa-pen-to-square"></i>
 											</a>
 
-											<form th:action="@{/huespedes/estado}" method="post" class="m-0">
+											<!-- Solo para administrador -->
+											<form th:action="@{/huespedes/estado}"
+												th:if="${session.usuarioSesion != null and session.usuarioSesion.idRol == 3}"
+												method="post" class="m-0">
 												<input type="hidden" name="id" th:value="${item.idHuesped}">
 												<div class="form-check form-switch">
 													<input class="form-check-input" type="checkbox" role="switch"

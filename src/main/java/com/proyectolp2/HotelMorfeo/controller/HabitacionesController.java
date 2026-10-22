@@ -15,6 +15,12 @@ import com.proyectolp2.HotelMorfeo.model.Habitacion;
 import com.proyectolp2.HotelMorfeo.service.HabitacionesService;
 import com.proyectolp2.HotelMorfeo.util.Alert;
 
+import com.proyectolp2.HotelMorfeo.dto.UsuarioSesion;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -25,14 +31,49 @@ public class HabitacionesController {
 	private final HabitacionesService habitacionesService;
 
 	@GetMapping("listado")
-	public String listado(Model model) {
+	public String listado(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
 		model.addAttribute("lstHabitaciones", habitacionesService.getAllByIdDesc());
 
 		return "habitaciones/listado";
 	}
 
 	@GetMapping("nuevo")
-	public String nuevo(Model model) {
+	public String nuevo(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+
+		// -------------------------------
 
 		Habitacion habitacion = new Habitacion();
 
@@ -46,7 +87,26 @@ public class HabitacionesController {
 
 	@PostMapping("registrar")
 	public String registrar(@ModelAttribute("habitacion") Habitacion habitacion, BindingResult bindingResult,
-			Model model, RedirectAttributes flash) {
+			Model model, RedirectAttributes flash, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "Revise los datos ingresados.");
@@ -68,7 +128,27 @@ public class HabitacionesController {
 	}
 
 	@GetMapping("edicion/{id}")
-	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash) {
+	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
+		// comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		var habitacion = habitacionesService.getOne(id);
 
@@ -86,7 +166,26 @@ public class HabitacionesController {
 
 	@PostMapping("grabar")
 	public String grabar(@ModelAttribute("habitacion") Habitacion habitacion, BindingResult bindingResult, Model model,
-			RedirectAttributes flash) {
+			RedirectAttributes flash, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "Revise los datos ingresados.");
@@ -108,7 +207,27 @@ public class HabitacionesController {
 	}
 
 	@PostMapping("estado")
-	public String cambiarEstado(@RequestParam Integer id, RedirectAttributes flash) {
+	public String cambiarEstado(@RequestParam Integer id, RedirectAttributes flash, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		var response = habitacionesService.cambiarEstado(id);
 

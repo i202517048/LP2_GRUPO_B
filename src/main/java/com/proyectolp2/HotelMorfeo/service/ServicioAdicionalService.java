@@ -95,14 +95,42 @@ public class ServicioAdicionalService {
 		return new ResultadoResponse(true, mensaje);
 	}
 
+	// Activar o desactivar el servicio
+	@Transactional
+	public ResultadoResponse cambiarEstado(Integer id) {
+
+		if (id == null || id <= 0) {
+			return new ResultadoResponse(false, "Debe indicar un servicio válido.");
+		}
+
+		var servicio = servicioAdicionalRepository.findById(id).orElse(null);
+
+		if (servicio == null) {
+			return new ResultadoResponse(false, "El servicio no existe.");
+		}
+
+		boolean estaActivo = Integer.valueOf(1).equals(servicio.getActivoServicios());
+
+		servicio.setActivoServicios(estaActivo ? 0 : 1);
+
+		// Solo se modifica la activación del catálogo.
+		// Se conservan nombre, precio y consumos históricos.
+		servicioAdicionalRepository.save(servicio);
+
+		String accion = estaActivo ? "desactivado" : "activado";
+
+		var mensaje = String.format("Servicio con Id %s %s.", servicio.getIdServicio(), accion);
+
+		return new ResultadoResponse(true, mensaje);
+	}
+
 	// Validaciones para crear y actualizar
 	private String validar(ServicioAdicional servicio) {
 
-		// INICIO ADAPTACION SAS03: evitar acceso a un objeto nulo
+		// Evitar acceso a un objeto nulo
 		if (servicio == null) {
 			return "Debe indicar los datos del servicio.";
 		}
-		// FIN ADAPTACION SAS03
 
 		if (servicio.getNombre() == null || servicio.getNombre().isBlank()) {
 			return "Ingrese el nombre del servicio.";
