@@ -23,6 +23,12 @@
 						<div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert">
 						</div>
 
+						<!-- Acceso sin sesión o sesión vencida -->
+						<div th:if="${param.sesion != null and error == null}" class="alert alert-info" role="status">
+							Debe iniciar sesión para continuar. Si ya había ingresado,
+							su sesión pudo haber finalizado.
+						</div>
+
 						<!-- No mostrar cierre exitoso junto a un error de acceso -->
 						<div th:if="${param.logout != null and error == null}" class="alert alert-success"
 							role="status">

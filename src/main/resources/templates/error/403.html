@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!-- INICIO ADAPTACION ROL08: respuesta de acceso denegado -->
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+<head>
+    <title>Hotel Morfeo - Acceso denegado</title>
+</head>
+<body>
+    <div th:fragment="contenido">
+        <div class="card shadow-lg">
+            <div class="card-body text-center">
+                <h1 class="card-title">Acceso denegado</h1>
+                <p>Su rol no tiene permiso para realizar esta operación.</p>
+                <a th:href="@{/home/dashboard}" class="btn btn-outline-dark">
+                    <i class="fa-solid fa-house" aria-hidden="true"></i>
+                    Regresar al inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<!-- FIN ADAPTACION ROL08 -->

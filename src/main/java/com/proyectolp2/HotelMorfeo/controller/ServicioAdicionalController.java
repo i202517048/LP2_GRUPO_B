@@ -8,11 +8,18 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.proyectolp2.HotelMorfeo.model.ServicioAdicional;
 import com.proyectolp2.HotelMorfeo.service.ServicioAdicionalService;
 import com.proyectolp2.HotelMorfeo.util.Alert;
+
+import com.proyectolp2.HotelMorfeo.dto.UsuarioSesion;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,14 +31,50 @@ public class ServicioAdicionalController {
 	private final ServicioAdicionalService servicioAdicionalService;
 
 	@GetMapping("listado")
-	public String listado(Model model) {
+	public String listado(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+		// -------------------------------
+
 		model.addAttribute("lstServicios", servicioAdicionalService.getAll());
 
 		return "servicios/listado";
 	}
 
 	@GetMapping("nuevo")
-	public String nuevo(Model model) {
+	public String nuevo(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
+
 		model.addAttribute("servicio", new ServicioAdicional());
 
 		return "servicios/nuevo";
@@ -39,7 +82,26 @@ public class ServicioAdicionalController {
 
 	@PostMapping("registrar")
 	public String registrar(@ModelAttribute("servicio") ServicioAdicional servicio, BindingResult bindingResult,
-			Model model, RedirectAttributes flash) {
+			Model model, RedirectAttributes flash, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "Revise los datos ingresados.");
@@ -60,7 +122,27 @@ public class ServicioAdicionalController {
 	}
 
 	@GetMapping("edicion/{id}")
-	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash) {
+	public String edicion(@PathVariable Integer id, Model model, RedirectAttributes flash, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		var servicio = servicioAdicionalService.getOne(id);
 
@@ -80,7 +162,26 @@ public class ServicioAdicionalController {
 	// Controller que consume el service update
 	@PostMapping("grabar")
 	public String grabar(@ModelAttribute("servicio") ServicioAdicional servicio, BindingResult bindingResult,
-			Model model, RedirectAttributes flash) {
+			Model model, RedirectAttributes flash, HttpServletRequest request, HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "Revise los datos ingresados.");
@@ -95,6 +196,38 @@ public class ServicioAdicionalController {
 		}
 
 		var alert = Alert.sweetToast(response.mensaje(), "success", 5000);
+		flash.addFlashAttribute("alert", alert);
+
+		return "redirect:/servicios/listado";
+	}
+
+	@PostMapping("estado")
+	public String cambiarEstado(@RequestParam("id") Integer id, RedirectAttributes flash, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
+		// Comprobar acceso antes de operar
+		httpResponse.setHeader("Cache-Control", "no-store");
+
+		var sesion = request.getSession(false);
+
+		if (sesion == null || !(sesion.getAttribute("usuarioSesion") instanceof UsuarioSesion usuario)) {
+			return "redirect:/login?sesion";
+		}
+
+		if (usuario.idUsuario() == null || usuario.idUsuario() <= 0
+				|| (!Integer.valueOf(2).equals(usuario.idRol()) && !Integer.valueOf(3).equals(usuario.idRol()))) {
+			sesion.invalidate();
+			return "redirect:/login?sesion";
+		}
+
+		if (!Integer.valueOf(3).equals(usuario.idRol())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+		}
+		// -------------------------------
+
+		var response = servicioAdicionalService.cambiarEstado(id);
+
+		var alert = Alert.sweetToast(response.mensaje(), response.success() ? "success" : "error", 5000);
+
 		flash.addFlashAttribute("alert", alert);
 
 		return "redirect:/servicios/listado";

@@ -1,79 +1,99 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+
 <head>
-    <title>Hotel Morfeo - Servicios Adicionales</title>
+	<title>Hotel Morfeo - Servicios Adicionales</title>
 </head>
+
 <body>
-    <div th:fragment="contenido">
+	<div th:fragment="contenido">
 
-	<div class="container-fluid px-0">
-		<div class="card shadow-lg">
-			<div class="card-body">
-				<div class="row">
-					<div class="col-md-10">
-						<h1 class="card-title">
-							Listado de Servicios Adicionales
-						</h1>
+		<div class="container-fluid px-0">
+			<div class="card shadow-lg">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-10">
+							<h1 class="card-title">
+								Listado de Servicios Adicionales
+							</h1>
+						</div>
+
+						<!-- Alta exclusiva del administrador -->
+						<div class="col-md-2"
+							th:if="${session.usuarioSesion != null and session.usuarioSesion.idRol == 3}">
+							<a th:href="@{/servicios/nuevo}" class="btn btn-success w-100">
+								<i class="fa-solid fa-plus"></i>
+								Nuevo
+							</a>
+						</div>
 					</div>
 
-					<div class="col-md-2">
-						<a th:href="@{/servicios/nuevo}" class="btn btn-success w-100">
-							<i class="fa-solid fa-plus"></i>
-							Nuevo
-						</a>
+					<div class="table-responsive overflow-auto" style="max-height: 70vh;">
+						<table class="table table-hover">
+							<thead class="table-dark text-center">
+								<tr class="position-sticky top-0">
+									<th>Id</th>
+									<th>Nombre</th>
+									<th>Precio (S/)</th>
+									<th>Estado</th>
+									<!-- Columna exclusiva del administrador -->
+									<th th:if="${session.usuarioSesion != null and session.usuarioSesion.idRol == 3}">
+										Acciones</th>
+								</tr>
+							</thead>
+
+							<tbody class="table-secondary">
+								<tr th:each="item : ${lstServicios}">
+									<td th:text="${item.idServicio}" class="text-center"></td>
+
+									<td th:text="${item.nombre}"></td>
+
+									<td th:text="${#numbers.formatDecimal(item.precio, 1, 2)}" class="text-end"></td>
+
+									<!-- Descripcion de activacion desde el modelo -->
+									<td th:text="${item.activoDescripcion}" class="text-center"></td>
+
+									<!-- Edición y Activación del administrador -->
+									<td th:if="${session.usuarioSesion != null and session.usuarioSesion.idRol == 3}">
+										<div class="d-flex justify-content-evenly align-items-center gap-3">
+											<a th:href="@{/servicios/edicion/{id}(id=${item.idServicio})}"
+												class="btn btn-outline-primary" title="Editar servicio"
+												aria-label="Editar servicio">
+												<i class="fa-regular fa-pen-to-square"></i>
+											</a>
+											<!-- Cambio de activación -->
+											<form th:action="@{/servicios/estado}" method="post" class="m-0">
+												<input type="hidden" name="id" th:value="${item.idServicio}">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch"
+														th:checked="${item.activoServicios == 1}"
+														th:attr="aria-label=|Cambiar activación de ${item.nombre}|"
+														onchange="this.form.requestSubmit()">
+												</div>
+											</form>
+										</div>
+									</td>
+								</tr>
+
+								<tr th:if="${#lists.isEmpty(lstServicios)}">
+									<td th:colspan="${session.usuarioSesion != null and session.usuarioSesion.idRol == 3 ? 5 : 4}"
+										class="text-center">
+										No hay servicios registrados.
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
+
+					<a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
+						<i class="fa-solid fa-reply"></i>
+						Regresar a reservas
+					</a>
 				</div>
-
-				<div class="table-responsive overflow-auto" style="max-height: 70vh;">
-					<table class="table table-hover">
-						<thead class="table-dark text-center">
-							<tr class="position-sticky top-0">
-								<th>Id</th>
-								<th>Nombre</th>
-								<th>Precio (S/)</th>
-								<th>Estado</th>
-								<th>Acciones</th>
-							</tr>
-						</thead>
-
-						<tbody class="table-secondary">
-							<tr th:each="item : ${lstServicios}">
-								<td th:text="${item.idServicio}" class="text-center"></td>
-
-								<td th:text="${item.nombre}"></td>
-
-								<td th:text="${#numbers.formatDecimal(item.precio, 1, 2)}" class="text-end"></td>
-
-								<!-- Descripcion de activacion desde el modelo -->
-                            <td th:text="${item.activoDescripcion}" class="text-center"></td>
-
-								<td class="text-center">
-									<a th:href="@{/servicios/edicion/{id}(id=${item.idServicio})}"
-										class="btn btn-outline-primary" title="Editar servicio"
-										aria-label="Editar servicio">
-										<i class="fa-regular fa-pen-to-square"></i>
-									</a>
-								</td>
-							</tr>
-
-							<tr th:if="${#lists.isEmpty(lstServicios)}">
-								<td colspan="5" class="text-center">
-									No hay servicios registrados.
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-
-				<a th:href="@{/reserva/listado}" class="btn btn-outline-dark">
-					<i class="fa-solid fa-reply"></i>
-					Regresar a reservas
-				</a>
 			</div>
 		</div>
+
 	</div>
-	
-    </div>
 </body>
+
 </html>
