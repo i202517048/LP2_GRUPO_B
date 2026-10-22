@@ -7,7 +7,6 @@
 
 <body>
 	<div th:fragment="contenido">
-
 		<div class="container-fluid px-0">
 			<div class="card shadow-lg">
 				<div class="card-body">
@@ -22,8 +21,62 @@
 						</div>
 					</div>
 
+					<!-- Filtros del listado -->
+					<div class="mb-3">
+						<fieldset class="border border-2 border-dark px-2 pb-2">
+							<legend class="float-none w-auto px-2">Filtros</legend>
+							<form th:action="@{/huespedes/listado}" method="get" th:object="${filter}">
+								<div class="row g-2 align-items-end">
+									<div class="col-md-4">
+										<label for="nombre" class="form-label">Nombre o apellido</label>
+										<div class="input-group">
+											<span class="input-group-text">
+												<i class="fa-solid fa-user"></i>
+											</span>
+											<input type="text" th:field="*{nombre}" class="form-control" maxlength="201"
+												placeholder="Ingrese parte del nombre o apellido">
+										</div>
+									</div>
+									<div class="col-md-3">
+										<label for="documento" class="form-label">Documento</label>
+										<div class="input-group">
+											<span class="input-group-text">
+												<i class="fa-solid fa-id-card"></i>
+											</span>
+											<input type="text" th:field="*{documento}" class="form-control"
+												maxlength="20" placeholder="Ingrese parte del documento">
+										</div>
+									</div>
+									<div class="col-md-2">
+										<label for="activo" class="form-label">Estado</label>
+										<div class="input-group">
+											<span class="input-group-text">
+												<i class="fa-solid fa-toggle-on"></i>
+											</span>
+											<select th:field="*{activo}" class="form-select">
+												<option value="">--Todos--</option>
+												<option value="1">Activo</option>
+												<option value="0">Inactivo</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-md-3 text-end">
+										<button type="submit" class="btn btn-outline-dark">
+											<i class="fa-solid fa-binoculars"></i> Buscar
+										</button>
+										<a th:href="@{/huespedes/listado}" class="btn btn-outline-secondary">
+											<i class="fa-solid fa-broom"></i> Limpiar
+										</a>
+									</div>
+								</div>
+							</form>
+						</fieldset>
+					</div>
+
+
 					<div class="table-responsive overflow-auto" style="max-height: 70vh;">
-						<table class="table table-hover">
+						<!-- Tabla para paginar -->
+						<table id="tbl-huespedes" class="table table-hover">
 							<thead class="table-dark text-center">
 								<tr class="position-sticky top-0">
 									<th>Id</th>
@@ -42,10 +95,9 @@
 									<td th:text="${item.nombres}"></td>
 									<td th:text="${item.apellidos}"></td>
 									<td th:text="${item.documento}" class="text-center"></td>
-									<td th:text="${#strings.isEmpty(item.telefono)
-                                            ? '-' : item.telefono}" class="text-center"></td>
-									<td th:text="${#strings.isEmpty(item.email)
-                                            ? '-' : item.email}"></td>
+									<td th:text="${#strings.isEmpty(item.telefono) ? '-' : item.telefono}"
+										class="text-center"></td>
+									<td th:text="${#strings.isEmpty(item.email) ? '-' : item.email}"></td>
 									<td th:text="${item.activoDescripcion}" class="text-center"></td>
 									<td>
 										<div class="d-flex justify-content-evenly align-items-center gap-3">
@@ -67,13 +119,7 @@
 														onchange="this.form.requestSubmit()">
 												</div>
 											</form>
-
 										</div>
-									</td>
-								</tr>
-								<tr th:if="${#lists.isEmpty(lstHuespedes)}">
-									<td colspan="8" class="text-center">
-										No hay huéspedes registrados.
 									</td>
 								</tr>
 							</tbody>
@@ -83,6 +129,36 @@
 			</div>
 		</div>
 
+		<!-- Paginación -->
+		<script th:inline="none">
+			$(function () {
+				$('#tbl-huespedes').DataTable({
+					language: {
+						lengthMenu: "Mostrar _MENU_ registros",
+						info: "Mostrando _START_ a _END_ de _TOTAL_ huéspedes",
+						infoEmpty: "Mostrando 0 huéspedes",
+						infoFiltered: "(de _MAX_ huéspedes en total)",
+						emptyTable: "No se encontraron huéspedes para los filtros seleccionados.",
+						zeroRecords: "No se encontraron huéspedes.",
+						paginate: {
+							first: "Primero",
+							previous: "Anterior",
+							next: "Siguiente",
+							last: "Último"
+						}
+					},
+					pageLength: 10,
+					lengthMenu: [5, 10, 25, 50],
+					ordering: true,
+					order: [[0, 'desc']],
+					// La búsqueda se realiza con el formulario GET y la consulta JPQL.
+					searching: false,
+					columnDefs: [
+						{targets: [7], orderable: false, searchable: false}
+					]
+				});
+			});
+		</script>
 	</div>
 </body>
 

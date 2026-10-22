@@ -15,6 +15,8 @@ import com.proyectolp2.HotelMorfeo.model.Huesped;
 import com.proyectolp2.HotelMorfeo.service.HuespedesService;
 import com.proyectolp2.HotelMorfeo.util.Alert;
 
+import com.proyectolp2.HotelMorfeo.dto.HuespedFilter;
+
 import com.proyectolp2.HotelMorfeo.dto.UsuarioSesion;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +34,8 @@ public class HuespedesController {
 
 	// Listado de huéspedes
 	@GetMapping("listado")
-	public String listado(Model model, HttpServletRequest request, HttpServletResponse httpResponse) {
+	public String listado(@ModelAttribute("filter") HuespedFilter filter, Model model, HttpServletRequest request,
+			HttpServletResponse httpResponse) {
 		// Comprobar acceso antes de operar
 		httpResponse.setHeader("Cache-Control", "no-store");
 
@@ -49,7 +52,8 @@ public class HuespedesController {
 		}
 		// -------------------------------
 
-		model.addAttribute("lstHuespedes", huespedesService.getAll());
+		model.addAttribute("lstHuespedes", huespedesService.search(filter));
+		model.addAttribute("filter", filter);
 
 		return "huespedes/listado";
 	}
