@@ -48,7 +48,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 			""")
 	long contarReservasPendientesOActivas(@Param("idHabitacion") Integer idHabitacion);
 
-	// INICIO ADAPTACION HREP04: comprobar compromisos de un huésped
+	// Comprobar compromisos de un huésped
 	@Query("""
 			select count(r)
 			from Reserva r
@@ -56,5 +56,14 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 				and r.estado in ('P', 'A')
 			""")
 	long contarReservasPendientesOActivasPorHuesped(@Param("idHuesped") Integer idHuesped);
-	// FIN ADAPTACION HREP04
+
+	// PARA BOLETA
+	@Query("select r from Reserva r where r.estado = 'A' and not exists (select b.idBoleta from Boleta b where b.reserva = r) order by r.idReserva desc")
+	List<Reserva> findActivasSinBoleta();
+
+	@org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+	@Query("select r from Reserva r where r.idReserva = :id")
+	java.util.Optional<Reserva> buscarParaEmitir(@Param("id") Integer id);
+
+	long countByHabitacionIdHabitacionAndEstadoAndIdReservaNot(Integer idHabitacion, String estado, Integer idReserva);
 }

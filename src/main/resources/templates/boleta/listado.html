@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+
+<head>
+	<title>Hotel Morfeo - Boletas</title>
+</head>
+
+<body>
+	<div th:fragment="contenido">
+		<div class="container-fluid px-0">
+			<div class="card shadow-lg">
+				<div class="card-body">
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<h1>Listado de boletas</h1>
+						<a th:href="@{/boleta/nuevo}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Nueva
+							boleta</a>
+					</div>
+					<div class="table-responsive">
+						<table id="tbl-boletas" class="table table-hover">
+							<thead class="table-dark">
+								<tr>
+									<th>Número</th>
+									<th>Emisión</th>
+									<th>Reserva</th>
+									<th>Cliente</th>
+									<th>Documento</th>
+									<th>Total (S/)</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody class="table-secondary">
+								<tr th:each="item : ${lstBoletas}">
+									<td th:text="${item.idBoleta}"></td>
+									<td th:text="${#temporals.format(item.fechaEmision, 'dd/MM/yyyy HH:mm')}"
+										th:attr="data-order=${item.fechaEmision}"></td>
+									<td th:text="${item.reserva.idReserva}"></td>
+									<td th:text="${item.clienteNombre}"></td>
+									<td th:text="${item.clienteDocumento}"></td>
+									<td class="text-end" th:text="${#numbers.formatDecimal(item.total, 1, 2)}"></td>
+									<td><a th:href="@{/boleta/ver/{id}(id=${item.idBoleta})}"
+											class="btn btn-outline-primary" title="Ver boleta"><i
+												class="fa-solid fa-eye"></i> Ver</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<script th:inline="none">
+						$(function () {
+							$('#tbl-boletas').DataTable({
+								pageLength: 10, lengthMenu: [5, 10, 25, 50], order: [[0, 'desc']],
+								columnDefs: [{targets: 6, orderable: false, searchable: false}],
+								language: {search: 'Buscar:', lengthMenu: 'Mostrar _MENU_ registros', info: 'Mostrando _START_ a _END_ de _TOTAL_ boletas', infoEmpty: 'No hay boletas', zeroRecords: 'No se encontraron coincidencias.', emptyTable: 'No hay boletas emitidas.', paginate: {previous: 'Anterior', next: 'Siguiente', first: 'Primero', last: 'Último'}}
+							});
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
