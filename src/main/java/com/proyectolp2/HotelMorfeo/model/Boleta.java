@@ -2,6 +2,8 @@ package com.proyectolp2.HotelMorfeo.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +12,8 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tbl_boletas")
-@Data
+@lombok.Getter
+@lombok.Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Boleta {
@@ -35,4 +38,8 @@ public class Boleta {
 
 	@Column(name = "cliente_documento", nullable = false, length = 20)
 	private String clienteDocumento;
+
+	// Cabecera y detalle como en el ejemplo del profesor.
+	@OneToMany(mappedBy = "boleta", cascade = CascadeType.ALL)
+	private List<DetalleBoleta> detalles = new ArrayList<>();
 }

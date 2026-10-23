@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+
+<head>
+	<title>Hotel Morfeo - Boletas</title>
+</head>
+
+<body>
+	<div th:fragment="contenido">
+		<div class="container-fluid px-0">
+			<div class="card shadow-lg">
+				<div class="card-body">
+					<h1>Emisión de boleta</h1>
+					<div th:if="${error != null}" th:text="${error}" class="alert alert-danger" role="alert"></div>
+					<form th:action="@{/boleta/nuevo}" method="get" class="row g-2 mb-4 align-items-end">
+						<div class="col-md-9"><label for="idReserva" class="form-label">Estancia activa</label>
+							<select id="idReserva" name="idReserva" class="form-select" required>
+								<option value="">--Seleccione--</option>
+								<option th:each="item : ${lstReservas}" th:value="${item.idReserva}"
+									th:selected="${item.idReserva == idReserva}"
+									th:text="|Reserva ${item.idReserva} — ${item.huesped.fullName} — Habitación ${item.habitacion.numero}|">
+								</option>
+							</select>
+						</div>
+						<div class="col-md-3"><button class="btn btn-outline-dark w-100">Vista previa</button></div>
+					</form>
+					<p th:if="${#lists.isEmpty(lstReservas)}" class="alert alert-info">No hay estancias activas
+						pendientes de emisión.</p>
+					<div th:if="${boleta != null}">
+						<p><strong>Cliente: </strong><span th:text="${boleta.clienteNombre}"></span> — <span
+								th:text="${boleta.clienteDocumento}"></span></p>
+						<p><strong>Entrada: </strong><span th:text="${boleta.reserva.fechaCheckin}"></span> |
+							<strong>Salida prevista: </strong><span
+								th:text="${boleta.reserva.fechaCheckoutPrevista}"></span></p>
+						<p class="text-muted">Se cobra por noches hasta la fecha actual, con un mínimo de una noche. No
+							se aplica recargo por hora. El total se vuelve a calcular al emitir.</p>
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead class="table-dark">
+									<tr>
+										<th>Descripción</th>
+										<th>Cantidad</th>
+										<th>Precio unitario (S/)</th>
+										<th>Subtotal (S/)</th>
+									</tr>
+								</thead>
+								<tbody class="table-secondary">
+									<tr th:each="item : ${boleta.detalles}">
+										<td th:text="${item.descripcion}"></td>
+										<td th:text="${item.cantidad}"></td>
+										<td class="text-end"
+											th:text="${#numbers.formatDecimal(item.precioUnitario, 1, 2)}"></td>
+										<td class="text-end" th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}">
+										</td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<th colspan="3" class="text-end">Total (S/)</th>
+										<th class="text-end" th:text="${#numbers.formatDecimal(boleta.total, 1, 2)}">
+										</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+						<form th:action="@{/boleta/registrar}" method="post"
+							onsubmit="return confirm('¿Emitir la boleta y finalizar esta estancia?');">
+							<input type="hidden" name="idReserva" th:value="${boleta.reserva.idReserva}">
+							<button class="btn btn-primary mb-3" type="submit"><i class="fa-solid fa-floppy-disk"></i>
+								Emitir y registrar salida</button>
+						</form>
+					</div>
+					<a th:href="@{/boleta/listado}" class="btn btn-outline-dark">Regresar al listado</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

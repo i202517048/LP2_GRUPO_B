@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+
+<head>
+	<title>Hotel Morfeo - Boletas</title>
+</head>
+
+<body>
+	<div th:fragment="contenido">
+		<div class="container-fluid px-0">
+			<div class="card shadow-lg">
+				<div class="card-body">
+					<h1 th:text="|Boleta N.º ${boleta.idBoleta}|"></h1>
+					<p><strong>Emisión: </strong><span
+							th:text="${#temporals.format(boleta.fechaEmision, 'dd/MM/yyyy HH:mm')}"></span></p>
+					<p><strong>Cliente: </strong><span th:text="${boleta.clienteNombre}"></span></p>
+					<p><strong>Documento: </strong><span th:text="${boleta.clienteDocumento}"></span></p>
+					<p th:text="|Reserva N.º ${boleta.reserva.idReserva}|"></p>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead class="table-dark">
+								<tr>
+									<th>Descripción</th>
+									<th>Cantidad</th>
+									<th>Precio unitario (S/)</th>
+									<th>Subtotal (S/)</th>
+								</tr>
+							</thead>
+							<tbody class="table-secondary">
+								<tr th:each="item : ${boleta.detalles}">
+									<td th:text="${item.descripcion}"></td>
+									<td th:text="${item.cantidad}"></td>
+									<td class="text-end" th:text="${#numbers.formatDecimal(item.precioUnitario, 1, 2)}">
+									</td>
+									<td class="text-end" th:text="${#numbers.formatDecimal(item.subtotal, 1, 2)}"></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr>
+									<th colspan="3" class="text-end">Total (S/)</th>
+									<th class="text-end" th:text="${#numbers.formatDecimal(boleta.total, 1, 2)}"></th>
+								</tr>
+							</tfoot>
+						</table>
+					</div><a th:href="@{/boleta/listado}" class="btn btn-outline-dark">Regresar</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
