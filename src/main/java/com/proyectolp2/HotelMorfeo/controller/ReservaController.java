@@ -174,6 +174,9 @@ public class ReservaController {
 		model.addAttribute("lstHabitaciones", habitacionesService.getAll());
 		model.addAttribute("reserva", reserva);
 
+		// Identificar la habitación original al abrir la edición
+		model.addAttribute("idHabitacionOriginal", reserva.getHabitacion().getIdHabitacion());
+
 		return "reserva/edicion";
 	}
 	// ------------------
@@ -226,6 +229,9 @@ public class ReservaController {
 		reservas.setEstado(existente.getEstado());
 		reservas.setFechaCheckoutReal(existente.getFechaCheckoutReal());
 		reservas.setPrecioNocheAcordado(existente.getPrecioNocheAcordado());
+
+		// Conservar la referencia original ante errores
+		model.addAttribute("idHabitacionOriginal", existente.getHabitacion().getIdHabitacion());
 
 		if (bindingResult.hasErrors()) {
 			model.addAttribute("error", "Revise los datos ingresados.");

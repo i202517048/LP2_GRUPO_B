@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.proyectolp2.HotelMorfeo.dto.HuespedFilter;
+
 import com.proyectolp2.HotelMorfeo.dto.ResultadoResponse;
 import com.proyectolp2.HotelMorfeo.model.Huesped;
 import com.proyectolp2.HotelMorfeo.repository.HuespedesRepository;
@@ -24,6 +26,16 @@ public class HuespedesService {
 	// Método listar
 	public List<Huesped> getAll() {
 		return huespedesRepository.findAllByOrderByIdHuespedDesc();
+	}
+
+	// Búsqueda independiente del getAll de reservas
+	public List<Huesped> search(HuespedFilter filter) {
+		if (filter == null) {
+			return getAll();
+		}
+
+		return huespedesRepository.findByFilters(limpiarOpcional(filter.nombre()), limpiarOpcional(filter.documento()),
+				filter.activo());
 	}
 
 	// obtener un huésped
