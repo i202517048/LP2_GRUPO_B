@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.proyectolp2.HotelMorfeo.model.Habitacion;
 import com.proyectolp2.HotelMorfeo.model.Reserva;
 
 public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
@@ -47,5 +48,19 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 			    and r.estado in ('P', 'A')
 			""")
 	long contarReservasPendientesOActivas(@Param("idHabitacion") Integer idHabitacion);
+	
+	@Query("""
+		    SELECT h FROM Habitacion h 
+		    WHERE (:fechaCheckIn IS NULL OR :fechaCheckOut IS NULL) 
+		    OR h.idHabitacion NOT IN (
+		        SELECT r.habitacion.idHabitacion FROM Reserva r 
+		        WHERE r.estado = 'A' 
+		        AND (r.fechaCheckin <= :fechaCheckOut AND r.fechaCheckoutPrevista >= :fechaCheckIn)
+		    )
+		""")
+		List<Habitacion> findHabitacionesDisponibles(
+		    @Param("fechaCheckIn") LocalDate checkin, 
+		    @Param("fechaCheckOut") LocalDate checkout
+		);
 
 }

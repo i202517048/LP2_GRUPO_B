@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.proyectolp2.HotelMorfeo.dto.ReservaFechaFilter;
 import com.proyectolp2.HotelMorfeo.dto.ReservaFilter;
 import com.proyectolp2.HotelMorfeo.model.Reserva;
 import com.proyectolp2.HotelMorfeo.service.HabitacionesService;
@@ -31,6 +32,14 @@ public class ReservaController {
 	private final HuespedesService huespedesService;
 	private final HabitacionesService habitacionesService;
 
+	@GetMapping("nuevaReserva")
+	public String listado(@ModelAttribute ReservaFechaFilter fechaFilter, Model model) {
+		model.addAttribute("lstHabitacionesDisponibles", reservaService.lstFiltroFechas(fechaFilter));
+		model.addAttribute("fechaFilter",fechaFilter);
+		return "reserva/nuevaReserva";
+	}
+	
+	
 	@GetMapping("listado")
 	public String listado(@ModelAttribute ReservaFilter filter, Model model) {
 

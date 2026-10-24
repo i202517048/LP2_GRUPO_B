@@ -8,6 +8,7 @@ import java.time.ZoneId;
 
 import org.springframework.stereotype.Service;
 
+import com.proyectolp2.HotelMorfeo.dto.ReservaFechaFilter;
 import com.proyectolp2.HotelMorfeo.dto.ReservaFilter;
 import com.proyectolp2.HotelMorfeo.dto.ResultadoResponse;
 import com.proyectolp2.HotelMorfeo.model.Reserva;
@@ -33,7 +34,17 @@ public class ReservaService {
 	public List<Reserva> getAll() {
 		return reservaRepository.findAllByOrderByIdReservaDesc();
 	}
-
+	
+	public List<Habitacion> lstFiltroFechas(ReservaFechaFilter fechafilter) {
+	    if (fechafilter == null || fechafilter.getFechaCheckIn() == null || fechafilter.getFechaCheckOut() == null) {
+	        return habitacionesRepository.findAll(); 
+	    }
+	    return reservaRepository.findHabitacionesDisponibles(
+	        fechafilter.getFechaCheckIn(), 
+	        fechafilter.getFechaCheckOut()
+	    );
+	}
+	
 	public List<Reserva> search(ReservaFilter filter) {
 		return reservaRepository.findByFilters(filter.numero(), filter.nombres());
 	}

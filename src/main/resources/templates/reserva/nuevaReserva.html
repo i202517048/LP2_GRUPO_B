@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/layout :: layoutBase(~{::contenido}, ~{::title})}">
+<head>
+    <title>Hotel Morfeo - Habitaciones</title>
+</head>
+<body>
+    <div th:fragment="contenido">
+
+
+    <div class="container-fluid px-0">
+        <div class="card shadow-lg">
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-10">
+                        <h1 class="card-title">
+							Nueva Reserva                          
+                        </h1>
+                    </div>
+
+                    <div class="col-md-2">
+                        <a th:href="@{/habitaciones/nuevo}"
+                           class="btn btn-success w-100">
+                            <i class="fa-solid fa-plus"></i>
+                            Nuevo
+                        </a>
+                    </div>
+                </div>
+				<!-- SECCIÓN DE FILTROS CON CALENDARIOS -->
+				                <div class="mb-4 mt-3">
+				                    <fieldset class="border border-2 border-dark px-3 pb-3 pt-2 rounded">
+				                        <legend class="float-none w-auto px-2 fs-6 fw-bold">Filtros de Búsqueda</legend>
+
+				                        <form th:action="@{/reserva/nuevaReserva}" method="get" th:object="${fechaFilter}">
+				                            <div class="row align-items-end g-3">
+
+				                                <!-- Filtro Fecha Check-in -->
+				                                <div class="col-md-4">
+				                                    <label for="fechaCheckin" class="form-label">Fecha Check-in</label>
+				                                    <div class="input-group">
+				                                        <span class="input-group-text">
+				                                            <i class="fa-solid fa-calendar-days"></i>
+				                                        </span>
+				                                        <input type="date" class="form-control" th:field="*{fechaCheckIn}" />
+				                                    </div>
+				                                </div>
+
+				                                <!-- Filtro Fecha Check-out -->
+				                                <div class="col-md-4">
+				                                    <label for="fechaCheckout" class="form-label">Fecha Check-out</label>
+				                                    <div class="input-group">
+				                                        <span class="input-group-text">
+				                                            <i class="fa-solid fa-calendar-check"></i>
+				                                        </span>
+				                                        <input type="date" class="form-control" th:field="*{fechaCheckOut}" />
+				                                    </div>
+				                                </div>
+
+				                                <!-- Botones de Acción -->
+				                                <div class="col-md-4 text-end">
+				                                    <button type="submit" class="btn btn-outline-dark">
+				                                        <i class="fa-solid fa-binoculars"></i> Buscar
+				                                    </button>
+				                                    <a th:href="@{/reserva/nuevaReserva}" class="btn btn-outline-secondary">
+				                                        <i class="fa-solid fa-broom"></i> Limpiar
+				                                    </a>
+				                                </div>
+
+				                            </div>
+				                        </form>
+				                    </fieldset>
+				                </div>
+				                <!-- FIN SECCIÓN DE FILTROS -->
+
+                <div class="table-responsive overflow-auto"
+                     style="max-height: 70vh;">
+
+                    <table class="table table-hover">
+
+                        <thead class="table-dark text-center">
+                            <tr class="position-sticky top-0">
+                                <th>Id</th>
+                                <th>Número</th>
+                                <th>Tipo</th>
+                                <th>Precio por noche (S/)</th>
+                                <th>Estado</th>
+                                <th>Activación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="table-secondary">
+
+                            <tr th:each="item : ${lstHabitacionesDisponibles}">
+
+                                <td th:text="${item.idHabitacion}"
+                                    class="text-center"></td>
+
+                                <td th:text="${item.numero}"
+                                    class="text-center"></td>
+
+                                <!-- Descripcion del tipo -->
+                                <td th:text="${item.tipoDescripcion}"
+                                    class="text-center"></td>
+
+                                <td th:text="${#numbers.formatDecimal(item.precioNoche, 1, 2)}"
+                                    class="text-center"></td>
+
+                                <!-- Descripciones de ocupacion y activacion -->
+                                <td th:text="${item.estadoDescripcion}"
+                                    class="text-center"></td>
+
+                                <td th:text="${item.activoDescripcion}"
+                                    class="text-center"></td>
+
+                                <td>
+                                    <div class="d-flex justify-content-evenly align-items-center">
+
+                                        <a th:href="@{/habitaciones/edicion/{id}(id=${item.idHabitacion})}"
+                                           class="btn btn-outline-primary"
+                                           title="Editar"
+                                           aria-label="Editar">
+
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+
+                                        <form th:action="@{/habitaciones/estado}"
+                                              method="post"
+                                              class="m-0">
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   th:value="${item.idHabitacion}">
+
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       role="switch"
+                                                       th:checked="${item.activoHabitaciones == true}"
+                                                       th:attr="aria-label=|Cambiar activación de habitación ${item.numero}|"
+                                                       onchange="this.form.requestSubmit()">
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+
+							<tr th:if="${#lists.isEmpty(lstHabitacionesDisponibles)}">
+							    <td colspan="7" class="text-center">
+							        No hay habitaciones disponibles para las fechas seleccionadas.
+							    </td>
+							</tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <a th:href="@{/reserva/listado}"
+                   class="btn btn-outline-dark">
+
+                    <i class="fa-solid fa-reply"></i>
+                    Regresar a reservas
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+</body>
+</html>
